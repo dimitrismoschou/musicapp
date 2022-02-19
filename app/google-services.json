@@ -1,0 +1,39 @@
+{
+  "project_info": {
+    "project_number": "708113119183",
+    "project_id": "musicapp-ad62e",
+    "storage_bucket": "musicapp-ad62e.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:708113119183:android:04ccfe578440fdd5dec4ba",
+        "android_client_info": {
+          "package_name": "com.unipi.mosdim.musicapp"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "708113119183-id89ps6eqfmn6dnves618dm1fkb9hb5b.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyBNJn7Lr7pI2UT5VVF7rGLKLZHkOJNI_Mo"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": [
+            {
+              "client_id": "708113119183-id89ps6eqfmn6dnves618dm1fkb9hb5b.apps.googleusercontent.com",
+              "client_type": 3
+            }
+          ]
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}

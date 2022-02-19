@@ -1,0 +1,4 @@
+<resources>
+    <string name="app_name">musicapp</string>
+    <string name="logout">Logout</string>
+</resources>
