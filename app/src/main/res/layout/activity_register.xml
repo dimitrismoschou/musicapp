@@ -18,12 +18,12 @@
         <TextView
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:text="Register"
-            android:textSize="30sp"
-            android:textStyle="bold"
-            android:textColor="@color/teal_700"
+            android:layout_marginVertical="16dp"
             android:gravity="center_horizontal"
-            android:layout_marginVertical="16dp"/>
+            android:text="@string/register"
+            android:textColor="@color/teal_700"
+            android:textSize="30sp"
+            android:textStyle="bold" />
 
 
         <com.google.android.material.textfield.TextInputLayout
@@ -35,8 +35,8 @@
                 android:id="@+id/etRegEmail"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Email"
-                android:inputType="textEmailAddress"/>
+                android:hint="@string/email"
+                android:inputType="textEmailAddress" />
         </com.google.android.material.textfield.TextInputLayout>
 
 
@@ -50,8 +50,8 @@
                 android:id="@+id/etRegPass"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:hint="Password"
-                android:inputType="textPassword"/>
+                android:hint="@string/password"
+                android:inputType="textPassword" />
         </com.google.android.material.textfield.TextInputLayout>
 
         <com.google.android.material.button.MaterialButton
@@ -59,7 +59,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="24dp"
-            android:text="Register"/>
+            android:text="@string/register" />
 
         <LinearLayout
             android:layout_width="match_parent"
@@ -71,18 +71,18 @@
             <TextView
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:text="Already registered"
-                android:textSize="16sp"/>
+                android:text="@string/already_registered"
+                android:textSize="16sp" />
 
             <TextView
                 android:id="@+id/tvLoginHere"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
-                android:text="Login here"
+                android:text="@string/login_here"
                 android:textColor="@color/teal_700"
-                android:textStyle="bold"
-                android:textSize="20sp"/>
+                android:textSize="20sp"
+                android:textStyle="bold" />
 
         </LinearLayout>
 

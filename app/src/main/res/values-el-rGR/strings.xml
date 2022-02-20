@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <string name="app_name">musicapp</string>
+    <string name="logout">Έξοδος</string>
+    <string name="login">Είσοδος</string>
+    <string name="email">Λογαριασμός ηλ. ταχυδρομίου</string>
+    <string name="password">Κωδικός</string>
+    <string name="not_registered">Δέν έχετε λογαριασμό;</string>
+    <string name="register_here">Εγγραφή εδώ.</string>
+    <string name="register">Εγγραφή</string>
+    <string name="already_registered">Ήδη εγγραμμένος;</string>
+    <string name="login_here">Είσοδος εδώ</string>
+</resources>
