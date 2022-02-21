@@ -5,6 +5,9 @@ import static android.view.Gravity.CENTER;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 import androidx.core.content.ContextCompat;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentTransaction;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -28,12 +31,14 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
+import com.unipi.mosdim.musicapp.databinding.ActivityMainBinding;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity {
     SeekBar seekBar;
+    ActivityMainBinding binding;
     Button btnLogOut;
     FirebaseAuth mAuth;
     LinearLayout layout,l, firstlayout;
@@ -49,6 +54,25 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+        binding = ActivityMainBinding.inflate(getLayoutInflater());
+        setContentView(binding.getRoot());
+        replaceFragment(new HomeFragment());
+
+        binding.bottomNavigationView.setOnItemSelectedListener(item -> {
+
+            switch(item.getItemId()){
+                case R.id.home:
+                    replaceFragment(new HomeFragment());
+                    break;
+                case R.id.profile:
+                    replaceFragment(new ProfileFragment());
+                    break;
+                case R.id.settings:
+                    replaceFragment(new SettingsFragment());
+                    break;
+            }
+            return true;
+        });
 
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
 
@@ -216,7 +240,11 @@ public class MainActivity extends AppCompatActivity {
 //    }
 
 
-
+    private void replaceFragment(Fragment fragment){
+        FragmentManager fragmentManager = getSupportFragmentManager();
+        FragmentTransaction fragmentTransaction = fragmentManager.beginTransaction();
+        fragmentTransaction.replace(androidx.constraintlayout.widget.R.id.layout, fragment);
+    }
 
     protected void onStart () {
         super.onStart();
