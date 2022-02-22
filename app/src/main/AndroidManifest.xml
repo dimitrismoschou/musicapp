@@ -14,6 +14,9 @@
         android:supportsRtl="true"
         android:theme="@style/Theme.Musicapp">
         <activity
+            android:name=".SettingsActivity"
+            android:exported="false" />
+        <activity
             android:name=".UserProfile"
             android:exported="false" />
         <activity
