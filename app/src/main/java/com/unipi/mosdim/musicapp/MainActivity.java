@@ -24,14 +24,12 @@ import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
 import com.google.firebase.database.FirebaseDatabase;
 import com.google.firebase.database.ValueEventListener;
-import com.unipi.mosdim.musicapp.databinding.ActivityMainBinding;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 public class MainActivity extends AppCompatActivity  {
     SeekBar seekBar;
-    ActivityMainBinding binding;
     Button btnLogOut;
     Button homeButton;
     Button profileButton;
