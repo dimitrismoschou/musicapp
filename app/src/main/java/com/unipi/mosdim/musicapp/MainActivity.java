@@ -10,6 +10,7 @@ import androidx.core.content.ContextCompat;
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
+import android.graphics.drawable.Icon;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -18,6 +19,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.NumberPicker;
@@ -48,13 +50,14 @@ public class MainActivity extends AppCompatActivity {
     ScrollView scrollView;
     MediaPlayer mediaPlayer = new MediaPlayer();
     TextView movingText,minText,maxText;
+    ImageButton playbtn,nextbtn,previousbtn;
     ArrayList<String> songName = new ArrayList<>();
     ArrayList<String> artistName = new ArrayList<>();
     ArrayList<String> category = new ArrayList<>();
     ArrayList<String> link = new ArrayList<>();
     ArrayList<String> location = new ArrayList<>();
     String getLink="";
-    int length=0;
+    int length=0,i;
 
     private Handler mSeekbarUpdateHandler = new Handler();
 
@@ -62,7 +65,6 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
         minText = findViewById(R.id.minTime);
         maxText = findViewById(R.id.maxTime);
@@ -70,7 +72,9 @@ public class MainActivity extends AppCompatActivity {
         movingText.setSelected(true);
         btnLogOut = findViewById(R.id.btnLogout);
         mAuth = FirebaseAuth.getInstance();
-
+        playbtn = findViewById(R.id.playbtn);
+        nextbtn = findViewById(R.id.nextbtn);
+        previousbtn = findViewById(R.id.previousbtn);
         btnLogOut.setOnClickListener(view -> {
             mAuth.signOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
@@ -80,7 +84,7 @@ public class MainActivity extends AppCompatActivity {
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                int i=0;
+                i=0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     songName.add((String) snapshot.child("name").getValue());   //τιτλος βιβλιων
                     artistName.add((String) snapshot.child("artist").getValue());
@@ -134,8 +138,6 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
-
-
     }
 
     private Runnable mUpdateSeekbar = new Runnable() {
@@ -150,10 +152,27 @@ public class MainActivity extends AppCompatActivity {
     public void setTime(){
         String time =(new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getCurrentPosition()));
         minText.setText(time);
+        if(minText.getText().equals(maxText.getText())){
+            int y=0;
+            for (String element : link) {
+                if (element == getLink) {
+                    break;
+                }
+                y++;
+            }
+            if(!link.contains(getLink)) {
+                playmusic(0);
+            }
+            if((link.size()-1)>y)
+                playmusic(y+1);
+            else if(link.size()-1<=y){
+                getLink="";
+                playmusic(0);
+            }
+        }
     }
 
     public void getAllData(int i){
-        System.out.println(songName);
 
         //hardcoded components
         layout = findViewById(R.id.layout_parent);
@@ -191,42 +210,7 @@ public class MainActivity extends AppCompatActivity {
         playbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                if(!mediaPlayer.isPlaying() && !getLink.equals(link.get(i))) {
-                    mediaPlayer.reset();
-                    try {
-                        mediaPlayer.setDataSource(link.get(i));
-                        mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                            @RequiresApi(api = Build.VERSION_CODES.M)
-                            @Override
-                            public void onPrepared(MediaPlayer mediaPlayer) {
-                                getLink = link.get(i);
-                                maxText.setText((new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getDuration())));
-                                seekBar.setMax(mediaPlayer.getDuration());
-                                mediaPlayer.start();
-                                playbtn.setText("Pause");
-                                mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
-                                mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(1));
-                                movingText.setText(songName.get(i)+","+artistName.get(i));
-                            }
-                        });
-                        mediaPlayer.prepare();
-                    }
-                    catch (IOException e){
-                        e.printStackTrace();
-                    }
-                }
-                else if(mediaPlayer.isPlaying()){
-                    mediaPlayer.pause();
-                    length = mediaPlayer.getCurrentPosition();
-                    System.out.println(length);
-                    playbtn.setText("Resume");
-                    mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
-                }
-                else{
-                    mediaPlayer.start();
-                    playbtn.setText("Pause");
-                    mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
-                }
+                playmusic(i);
             }
         });
 
@@ -238,35 +222,92 @@ public class MainActivity extends AppCompatActivity {
         this.layout.addView(l1h);
     }
 
-//    public void playmusic(View view){
-//        if(!mediaPlayer.isPlaying() && length==0){
-//        try {
-//            mediaPlayer.setDataSource("https://firebasestorage.googleapis.com/v0/b/musicapp-ad62e.appspot.com/o/Eminem%20-%20Lose%20Yourself%20%5BHD%5D.mp3?alt=media&token=50e3d705-0a76-44ab-a4fe-cee0beb42e68");
-//            mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-//                @Override
-//                public void onPrepared(MediaPlayer mediaPlayer) {
-//                    mediaPlayer.start();
-//                }
-//            });
-//            mediaPlayer.prepare();
-//        }
-//        catch (IOException e){
-//            e.printStackTrace();
-//        }
-//    }
-//        else if(mediaPlayer.isPlaying()){
-//            mediaPlayer.pause();
-//            length = mediaPlayer.getCurrentPosition();
-//        }
-//        else{
-//            mediaPlayer.seekTo(length);
-//            mediaPlayer.start();
-//        }
-//    }
-//    public void stopmusic(View view){
-//        mediaPlayer.seekTo(length);
-//        mediaPlayer.start();
-//    }
+    public void playmusic(int i){
+        if(!getLink.equals(link.get(i))) {
+            mediaPlayer.reset();
+            try {
+                mediaPlayer.setDataSource(link.get(i));
+                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                    @RequiresApi(api = Build.VERSION_CODES.M)
+                    @Override
+                    public void onPrepared(MediaPlayer mediaPlayer) {
+                        playbtn.setImageResource(R.drawable.pauseimg);
+                        getLink = link.get(i);
+                        maxText.setText((new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getDuration())));
+                        seekBar.setMax(mediaPlayer.getDuration());
+                        mediaPlayer.start();
+                        mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+                        mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(1));
+                        movingText.setText(songName.get(i)+","+artistName.get(i));
+                    }
+                });
+                mediaPlayer.prepare();
+            }
+            catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        else if(mediaPlayer.isPlaying()){
+            playbtn.setImageResource(R.drawable.playimg);
+            mediaPlayer.pause();
+            length = mediaPlayer.getCurrentPosition();
+            mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
+        }
+        else{
+            playbtn.setImageResource(R.drawable.pauseimg);
+            mediaPlayer.start();
+            mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
+        }
+    }
+    public void playclick(View view){
+        int y=0;
+        for (String element : link) {
+            if (element == getLink) {
+                break;
+            }
+            y++;
+        }
+        if(!link.contains(getLink))
+            y=0;
+        playmusic(y);
+    }
+
+    public void previousbtn(View view) {
+        int y = 0;
+        for (String element : link) {
+            if (element == getLink) {
+                break;
+            }
+            y++;
+        }
+        if (!link.contains(getLink))
+            y = 0;
+        if (y > 0)
+            playmusic(y - 1);
+        else {
+            getLink="";
+            playmusic(0);
+        }
+    }
+    public void nextbtn(View view){
+        int y=0;
+        for (String element : link) {
+            if (element == getLink) {
+                break;
+            }
+            y++;
+        }
+        if(!link.contains(getLink)) {
+            playmusic(0);
+        }
+        if((link.size()-1)>y)
+            playmusic(y+1);
+        else if(link.size()-1<=y){
+            getLink="";
+            playmusic(0);
+        }
+    }
+
 
     protected void onStart () {
         super.onStart();
