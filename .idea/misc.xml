@@ -3,13 +3,19 @@
   <component name="DesignSurface">
     <option name="filePathToZoomLevelMap">
       <map>
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/drawable-v24/ic_launcher_foreground.xml" value="0.3495" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/drawable/ic_dashboard_black_24dp.xml" value="0.3495" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/drawable/ic_notifications_black_24dp.xml" value="0.3495" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/activity_bottom_navigation.xml" value="0.36666666666666664" />
         <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/activity_login.xml" value="0.1792717086834734" />
-        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/activity_main.xml" value="0.1" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/activity_main.xml" value="0.33" />
         <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/activity_register.xml" value="0.33" />
-        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/activity_user_profile.xml" value="0.25" />
-        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/fragment_home.xml" value="0.1" />
-        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/fragment_profile.xml" value="0.1" />
-        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/fragment_settings.xml" value="0.1" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/activity_user_profile.xml" value="0.12222222222222222" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/fragment_dashboard.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/fragment_home.xml" value="0.33" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/fragment_notifications.xml" value="0.36666666666666664" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/fragment_profile.xml" value="0.19879518072289157" />
+        <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/fragment_settings.xml" value="0.33" />
         <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/layout/header_menu.xml" value="0.33" />
         <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/menu/bottom_nav_menu.xml" value="0.1" />
         <entry key="..\:/Users/Demetrius/Documents/GitHub/musicapp/app/src/main/res/menu/menu_main.xml" value="0.33" />

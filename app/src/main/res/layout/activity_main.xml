@@ -95,13 +95,32 @@
         app:layout_constraintStart_toStartOf="@+id/seekBar3"
         app:layout_constraintTop_toBottomOf="@+id/seekBar3" />
 
-    <com.google.android.material.bottomnavigation.BottomNavigationView
-        android:id="@+id/bottomNavigationView"
-        android:layout_width="match_parent"
+    <Button
+        android:id="@+id/homebutton"
+        android:layout_width="wrap_content"
         android:layout_height="wrap_content"
-        app:layout_constraintEnd_toEndOf="@+id/nextbtn"
+        android:background="@drawable/ic_baseline_home_24"
+        app:layout_constraintEnd_toEndOf="@+id/previousbtn"
         app:layout_constraintStart_toStartOf="@+id/previousbtn"
-        app:layout_constraintTop_toBottomOf="@+id/playbtn"
-        app:menu="@menu/bottom_nav_menu"/>
+        app:layout_constraintTop_toBottomOf="@+id/previousbtn" />
+
+    <Button
+        android:id="@+id/profilebutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_baseline_person_24"
+        app:layout_constraintEnd_toEndOf="@+id/playbtn"
+        app:layout_constraintHorizontal_bias="0.472"
+        app:layout_constraintStart_toStartOf="@+id/playbtn"
+        app:layout_constraintTop_toBottomOf="@+id/playbtn" />
+
+    <Button
+        android:id="@+id/settingsbutton"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@drawable/ic_baseline_settings_24"
+        app:layout_constraintEnd_toEndOf="@+id/nextbtn"
+        app:layout_constraintStart_toStartOf="@+id/nextbtn"
+        app:layout_constraintTop_toBottomOf="@+id/nextbtn" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
