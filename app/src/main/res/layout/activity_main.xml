@@ -24,9 +24,7 @@
             android:id="@+id/layout_parent"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
-            android:orientation="vertical">
-
-        </LinearLayout>
+            android:orientation="vertical" />
     </ScrollView>
 
     <Button
@@ -146,5 +144,31 @@
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toEndOf="@+id/movingText"
         app:layout_constraintTop_toBottomOf="@+id/seekBar3" />
+
+    <EditText
+        android:id="@+id/search_genreEditText"
+        android:layout_width="222dp"
+        android:layout_height="47dp"
+        android:layout_marginStart="16dp"
+        android:layout_marginTop="12dp"
+        android:ems="10"
+        android:hint="@string/search_genre"
+        android:inputType="textPersonName"
+        android:minHeight="48dp"
+        app:layout_constraintStart_toStartOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
+
+    <ImageButton
+        android:id="@+id/imageButton"
+        android:layout_width="44dp"
+        android:layout_height="40dp"
+        android:layout_marginTop="12dp"
+        android:onClick="searchGenre"
+        app:layout_constraintEnd_toEndOf="@+id/search_genreEditText"
+        app:layout_constraintHorizontal_bias="1.0"
+        app:layout_constraintStart_toStartOf="@+id/search_genreEditText"
+        app:layout_constraintTop_toTopOf="parent"
+        app:srcCompat="@android:drawable/ic_menu_search"
+        tools:ignore="TouchTargetSizeCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
