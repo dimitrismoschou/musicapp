@@ -19,6 +19,7 @@ import android.view.Gravity;
 import android.view.View;
 import android.view.ViewGroup;
 import android.widget.Button;
+import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -308,6 +309,28 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
+    public void searchGenre(View view){
+        int i=0;
+        layout.removeAllViews();
+        if (!((EditText)findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()){
+            int found = 0;
+            for (String song_genre: category) {
+                if (song_genre.equals(((EditText)findViewById(R.id.search_genreEditText)).getText().toString())){
+                    found++;
+                    getAllData(i);
+                }
+                i++;
+            }
+            Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
+        }
+        else{
+            for (int j = 0; j < songName.size(); j++) {
+                getAllData(j);
+            }
+            Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
+        }
+
+    }
 
     protected void onStart () {
         super.onStart();
