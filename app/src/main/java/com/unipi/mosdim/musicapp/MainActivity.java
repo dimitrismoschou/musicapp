@@ -52,7 +52,7 @@ public class MainActivity extends AppCompatActivity {
     ScrollView scrollView;
     MediaPlayer mediaPlayer = new MediaPlayer();
     TextView movingText,minText,maxText;
-    ImageButton playbtn,nextbtn,previousbtn;
+    Button playbtn,nextbtn,previousbtn;
     ArrayList<String> songName = new ArrayList<>();
     ArrayList<String> artistName = new ArrayList<>();
     ArrayList<String> category = new ArrayList<>();
@@ -257,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
-                        playbtn.setImageResource(R.drawable.pauseimg);
+                        playbtn.setBackgroundResource(R.drawable.pauseimg);
                         getLink = link.get(i);
                         maxText.setText((new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getDuration())));
                         seekBar.setMax(mediaPlayer.getDuration());
@@ -274,13 +274,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else if(mediaPlayer.isPlaying()){
-            playbtn.setImageResource(R.drawable.playimg);
+            playbtn.setBackgroundResource(R.drawable.playimg);
             mediaPlayer.pause();
             length = mediaPlayer.getCurrentPosition();
             mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
         }
         else{
-            playbtn.setImageResource(R.drawable.pauseimg);
+            playbtn.setBackgroundResource(R.drawable.pauseimg);
             mediaPlayer.start();
             mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
         }

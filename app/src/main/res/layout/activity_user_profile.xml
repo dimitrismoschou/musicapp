@@ -4,6 +4,7 @@
     xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
+    android:background="#858F8F"
     tools:context=".UserProfile">
 
     <LinearLayout
@@ -14,7 +15,7 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
-            android:background="@color/design_default_color_background">
+            >
 
 
             <ImageView
@@ -29,7 +30,7 @@
         <RelativeLayout
             android:layout_width="match_parent"
             android:layout_height="180dp"
-            android:background="@color/design_default_color_background"
+            android:background="@color/cardview_light_background"
             android:padding="20dp" >
 
             <ImageView
