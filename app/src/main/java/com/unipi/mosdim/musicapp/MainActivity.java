@@ -162,13 +162,18 @@ public class MainActivity extends AppCompatActivity {
                 y++;
             }
             if(!link.contains(getLink)) {
+                Thread t = new Thread(playmusic(0));
+                t.start();
                 playmusic(0);
             }
-            if((link.size()-1)>y)
-                playmusic(y+1);
+            if((link.size()-1)>y) {
+                Thread t = new Thread(playmusic(y + 1));
+                t.start();
+            }
             else if(link.size()-1<=y){
                 getLink="";
-                playmusic(0);
+                Thread t = new Thread(playmusic(0));
+                t.start();
             }
         }
     }
@@ -211,7 +216,8 @@ public class MainActivity extends AppCompatActivity {
         playbtn.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playmusic(i);
+                Thread t = new Thread(playmusic(i));
+                t.start();
             }
         });
 
@@ -223,43 +229,47 @@ public class MainActivity extends AppCompatActivity {
         this.layout.addView(l1h);
     }
 
-    public void playmusic(int i){
-        if(!getLink.equals(link.get(i))) {
-            mediaPlayer.reset();
-            try {
-                mediaPlayer.setDataSource(link.get(i));
-                mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
-                    @RequiresApi(api = Build.VERSION_CODES.M)
-                    @Override
-                    public void onPrepared(MediaPlayer mediaPlayer) {
-                        playbtn.setImageResource(R.drawable.pauseimg);
-                        getLink = link.get(i);
-                        maxText.setText((new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getDuration())));
-                        seekBar.setMax(mediaPlayer.getDuration());
-                        mediaPlayer.start();
-                        mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
-                        mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(1));
-                        movingText.setText(songName.get(i)+","+artistName.get(i));
-                    }
-                });
-                mediaPlayer.prepare();
+    public Runnable playmusic(int i){
+        Runnable runnable = () -> {
+            if(!getLink.equals(link.get(i))) {
+                mediaPlayer.reset();
+                try {
+                    mediaPlayer.setDataSource(link.get(i));
+                    mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
+                        @RequiresApi(api = Build.VERSION_CODES.M)
+                        @Override
+                        public void onPrepared(MediaPlayer mediaPlayer) {
+                            playbtn.setImageResource(R.drawable.pauseimg);
+                            getLink = link.get(i);
+                            maxText.setText((new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getDuration())));
+                            seekBar.setMax(mediaPlayer.getDuration());
+                            mediaPlayer.start();
+                            mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
+                            mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(1));
+                            movingText.setText(songName.get(i)+","+artistName.get(i));
+                        }
+                    });
+                    mediaPlayer.prepare();
+                }
+                catch (IOException e){
+                    e.printStackTrace();
+                }
             }
-            catch (IOException e){
-                e.printStackTrace();
+            else if(mediaPlayer.isPlaying()){
+                playbtn.setImageResource(R.drawable.playimg);
+                mediaPlayer.pause();
+                length = mediaPlayer.getCurrentPosition();
+                mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
             }
-        }
-        else if(mediaPlayer.isPlaying()){
-            playbtn.setImageResource(R.drawable.playimg);
-            mediaPlayer.pause();
-            length = mediaPlayer.getCurrentPosition();
-            mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
-        }
-        else{
-            playbtn.setImageResource(R.drawable.pauseimg);
-            mediaPlayer.start();
-            mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
-        }
+            else{
+                playbtn.setImageResource(R.drawable.pauseimg);
+                mediaPlayer.start();
+                mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
+            }
+        };
+        return runnable;
     }
+
     public void playclick(View view){
         int y=0;
         for (String element : link) {
@@ -270,7 +280,8 @@ public class MainActivity extends AppCompatActivity {
         }
         if(!link.contains(getLink))
             y=0;
-        playmusic(y);
+        Thread t = new Thread(playmusic(y));
+        t.start();
     }
 
     public void previousbtn(View view) {
@@ -340,3 +351,6 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 }
+
+//Threads are not working properly, possibly because I have created
+// so many threads every time play button is pressed
