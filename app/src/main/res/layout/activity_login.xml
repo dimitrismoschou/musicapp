@@ -5,7 +5,11 @@
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:orientation="vertical"
-    android:padding="24dp"
+    android:background="#858F8F"
+    android:gravity="center_vertical"
+    android:padding="16dp"
+    app:layout_constraintBottom_toBottomOf="parent"
+    app:layout_constraintBottom_toTopOf="parent"
     tools:context=".LoginActivity">
 
 
@@ -22,7 +26,7 @@
             android:layout_marginVertical="16dp"
             android:gravity="center_horizontal"
             android:text="@string/login"
-            android:textColor="@color/teal_700"
+            android:textColor="@color/black"
             android:textSize="30sp"
             android:textStyle="bold" />
 
@@ -81,7 +85,7 @@
                 android:layout_height="wrap_content"
                 android:layout_marginLeft="8dp"
                 android:text="@string/register_here"
-                android:textColor="@color/teal_700"
+                android:textColor="@color/black"
                 android:textSize="20sp"
                 android:textStyle="bold" />
 

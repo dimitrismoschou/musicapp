@@ -6,7 +6,7 @@ import static android.view.Gravity.FILL_HORIZONTAL;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
-import androidx.core.content.ContextCompat;
+
 
 import android.content.Intent;
 import android.graphics.PorterDuff;
@@ -23,14 +23,12 @@ import android.widget.EditText;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
-import android.widget.NumberPicker;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
 import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
-import com.google.firebase.auth.FirebaseUser;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
 import com.google.firebase.database.DatabaseReference;
@@ -46,12 +44,15 @@ public class MainActivity extends AppCompatActivity {
 
     SeekBar seekBar;
     Button btnLogOut;
+    Button homeButton;
+    Button profileButton;
+    Button settingsButton;
     FirebaseAuth mAuth;
     LinearLayout layout,l, firstlayout;
     ScrollView scrollView;
     MediaPlayer mediaPlayer = new MediaPlayer();
     TextView movingText,minText,maxText;
-    ImageButton playbtn,nextbtn,previousbtn;
+    Button playbtn,nextbtn,previousbtn;
     ArrayList<String> songName = new ArrayList<>();
     ArrayList<String> artistName = new ArrayList<>();
     ArrayList<String> category = new ArrayList<>();
@@ -66,6 +67,30 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        homeButton = findViewById(R.id.homebutton);
+        profileButton = findViewById(R.id.profilebutton);
+        settingsButton = findViewById(R.id.settingsbutton);
+
+        homeButton.setOnClickListener(new View.OnClickListener(){
+
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                startActivity(i);
+            }
+
+        });
+
+        profileButton.setOnClickListener(new View.OnClickListener(){
+
+            public void onClick(View v) {
+                Intent i = new Intent(getApplicationContext(),UserProfile.class);
+                startActivity(i);
+            }
+
+        });
+
+
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
         minText = findViewById(R.id.minTime);
         maxText = findViewById(R.id.maxTime);
@@ -232,7 +257,7 @@ public class MainActivity extends AppCompatActivity {
                     @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
-                        playbtn.setImageResource(R.drawable.pauseimg);
+                        playbtn.setBackgroundResource(R.drawable.pauseimg);
                         getLink = link.get(i);
                         maxText.setText((new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getDuration())));
                         seekBar.setMax(mediaPlayer.getDuration());
@@ -249,13 +274,13 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else if(mediaPlayer.isPlaying()){
-            playbtn.setImageResource(R.drawable.playimg);
+            playbtn.setBackgroundResource(R.drawable.playimg);
             mediaPlayer.pause();
             length = mediaPlayer.getCurrentPosition();
             mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
         }
         else{
-            playbtn.setImageResource(R.drawable.pauseimg);
+            playbtn.setBackgroundResource(R.drawable.pauseimg);
             mediaPlayer.start();
             mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
         }
@@ -332,11 +357,15 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     protected void onStart () {
         super.onStart();
         String user = mAuth.getUid();
         if (user == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+        }
+        else {
+            mAuth.getCurrentUser();
         }
     }
 }
