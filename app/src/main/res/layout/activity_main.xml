@@ -75,7 +75,6 @@
         android:layout_weight="1"
         android:adjustViewBounds="true"
         android:background="@drawable/daco_5523381"
-
         android:clickable="true"
         android:onClick="nextbtn"
         android:padding="20dp"
@@ -179,8 +178,8 @@
 
     <EditText
         android:id="@+id/search_genreEditText"
-        android:layout_width="222dp"
-        android:layout_height="47dp"
+        android:layout_width="274dp"
+        android:layout_height="43dp"
         android:layout_marginStart="16dp"
         android:layout_marginTop="12dp"
         android:ems="10"
@@ -201,6 +200,7 @@
         app:layout_constraintStart_toStartOf="@+id/search_genreEditText"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_search"
+        android:backgroundTint="@color/transparent"
         tools:ignore="TouchTargetSizeCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
