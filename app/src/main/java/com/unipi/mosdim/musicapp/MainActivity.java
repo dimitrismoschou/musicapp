@@ -58,6 +58,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> category = new ArrayList<>();
     ArrayList<String> link = new ArrayList<>();
     ArrayList<String> location = new ArrayList<>();
+    ArrayList<Button> btn = new ArrayList<>();
     String getLink="";
     int length=0,i;
 
@@ -75,8 +76,9 @@ public class MainActivity extends AppCompatActivity {
         homeButton.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                Intent i = new Intent(MainActivity.this,MainActivity.class);
                 startActivity(i);
+                finish();
             }
 
         });
@@ -204,7 +206,6 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void getAllData(int i){
-
         //hardcoded components
         layout = findViewById(R.id.layout_parent);
         scrollView = findViewById(R.id.scrollView_parent);
@@ -232,13 +233,12 @@ public class MainActivity extends AppCompatActivity {
         l1v.addView(title1);
         l1v.addView(t1);
 
-        Button playbtn = new Button(this);
+        btn.add(i,new Button(this));
         lparams_inside.weight = 1;
-        playbtn.setLayoutParams(lparams_inside);
-        playbtn.setText("Play");
-        playbtn.setId(i);
-        playbtn.setEnabled(true);
-        playbtn.setOnClickListener(new View.OnClickListener() {
+        btn.get(i).setLayoutParams(lparams_inside);
+        btn.get(i).setBackgroundResource(R.drawable.ic_small_play);
+        btn.get(i).setEnabled(true);
+        btn.get(i).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
                 Thread t = new Thread(playmusic(i));
@@ -248,7 +248,7 @@ public class MainActivity extends AppCompatActivity {
 
 
         l1h.addView(l1v);
-        l1h.addView(playbtn);
+        l1h.addView(btn.get(i));
 
         //firstlayout.addView(l1h);
         this.layout.addView(l1h);
@@ -264,6 +264,9 @@ public class MainActivity extends AppCompatActivity {
                         @RequiresApi(api = Build.VERSION_CODES.M)
                         @Override
                         public void onPrepared(MediaPlayer mediaPlayer) {
+                            for(Button btn1 :btn)
+                                btn1.setBackgroundResource(R.drawable.ic_small_play);
+                            btn.get(i).setBackgroundResource(R.drawable.ic_small_pause);
                             playbtn.setBackgroundResource(R.drawable.pauseimg);
                             getLink = link.get(i);
                             maxText.setText((new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getDuration())));
@@ -281,12 +284,14 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
             else if(mediaPlayer.isPlaying()){
+                btn.get(i).setBackgroundResource(R.drawable.ic_small_play);
                 playbtn.setBackgroundResource(R.drawable.playimg);
                 mediaPlayer.pause();
                 length = mediaPlayer.getCurrentPosition();
                 mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
             }
             else{
+                btn.get(i).setBackgroundResource(R.drawable.ic_small_pause);
                 playbtn.setBackgroundResource(R.drawable.pauseimg);
                 mediaPlayer.start();
                 mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
