@@ -171,10 +171,11 @@
         android:layout_marginTop="4dp"
         android:text="-:--"
         app:layout_constraintBottom_toTopOf="@+id/nextbtn"
-        app:layout_constraintEnd_toEndOf="@+id/nextbtn"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toEndOf="@+id/movingText"
-        app:layout_constraintTop_toBottomOf="@+id/seekBar3" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintHorizontal_bias="0.518"
+        app:layout_constraintStart_toEndOf="@+id/nextbtn"
+        app:layout_constraintTop_toBottomOf="@+id/seekBar3"
+        app:layout_constraintVertical_bias="0.0" />
 
     <EditText
         android:id="@+id/search_genreEditText"
