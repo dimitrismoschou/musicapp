@@ -1,27 +1,23 @@
 package com.unipi.mosdim.musicapp;
 
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.FILL_HORIZONTAL;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Icon;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Gravity;
+import android.text.method.KeyListener;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
@@ -44,15 +40,15 @@ public class MainActivity extends AppCompatActivity {
 
     SeekBar seekBar;
     Button btnLogOut;
-    Button homeButton;
-    Button profileButton;
-    Button settingsButton;
+    ImageButton search_btn;
+    Button homeButton, profileButton, settingsButton;
     FirebaseAuth mAuth;
-    LinearLayout layout,l, firstlayout;
+    LinearLayout layout;
     ScrollView scrollView;
     MediaPlayer mediaPlayer = new MediaPlayer();
     TextView movingText,minText,maxText;
     Button playbtn,nextbtn,previousbtn;
+    EditText search;
     ArrayList<String> songName = new ArrayList<>();
     ArrayList<String> artistName = new ArrayList<>();
     ArrayList<String> category = new ArrayList<>();
@@ -72,6 +68,8 @@ public class MainActivity extends AppCompatActivity {
         homeButton = findViewById(R.id.homebutton);
         profileButton = findViewById(R.id.profilebutton);
         settingsButton = findViewById(R.id.settingsbutton);
+        search = findViewById(R.id.search_genreEditText);
+        search_btn = findViewById(R.id.imageButton);
 
         homeButton.setOnClickListener(new View.OnClickListener(){
 
@@ -92,6 +90,25 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        search.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if ((keyEvent.getAction()== KeyEvent.ACTION_DOWN) && (i == keyEvent.KEYCODE_ENTER)){
+                    search_btn.performClick();
+
+                    //close keyboard
+                    View current_view = MainActivity.this.getCurrentFocus();
+                    if (current_view != null) {
+                        InputMethodManager manager =
+                                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        manager.hideSoftInputFromWindow(current_view.getWindowToken(), 0);
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+        });
 
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
         minText = findViewById(R.id.minTime);
@@ -191,8 +208,9 @@ public class MainActivity extends AppCompatActivity {
             if(!link.contains(getLink)) {
                 playmusic(0);
             }
-            if((link.size()-1)>y)
-                playmusic(y+1);
+            if((link.size()-1)>y) {
+                playmusic(y + 1);
+            }
             else if(link.size()-1<=y){
                 getLink="";
                 playmusic(0);
@@ -290,6 +308,7 @@ public class MainActivity extends AppCompatActivity {
             mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
         }
     }
+
     public void playclick(View view){
         int y=0;
         for (String element : link) {
