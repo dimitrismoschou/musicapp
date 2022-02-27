@@ -103,9 +103,12 @@ public class MainActivity extends AppCompatActivity {
         playbtn = findViewById(R.id.playbtn);
         nextbtn = findViewById(R.id.nextbtn);
         previousbtn = findViewById(R.id.previousbtn);
+
         btnLogOut.setOnClickListener(view -> {
             mAuth.signOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            mediaPlayer.reset();
+            finish();
         });
         DatabaseReference myRef;
         myRef = FirebaseDatabase.getInstance("https://musicapp-ad62e-default-rtdb.firebaseio.com/").getReference().child("songs");
@@ -176,6 +179,7 @@ public class MainActivity extends AppCompatActivity {
             setTime();
         }
     };
+
 
     public void setTime(){
         String time =(new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getCurrentPosition()));
