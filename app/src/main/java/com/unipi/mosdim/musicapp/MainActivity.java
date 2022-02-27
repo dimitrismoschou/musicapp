@@ -11,6 +11,8 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.text.Editable;
+import android.text.TextWatcher;
 import android.text.method.KeyListener;
 import android.view.KeyEvent;
 import android.view.View;
@@ -110,6 +112,24 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if((search.length() > 2 && i1<i2) || search.getText().toString().isEmpty())
+                    search_btn.performClick();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
+
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
         minText = findViewById(R.id.minTime);
         maxText = findViewById(R.id.maxTime);
@@ -184,6 +204,7 @@ public class MainActivity extends AppCompatActivity {
         });
 
     }
+
 
     private Runnable mUpdateSeekbar = new Runnable() {
         @Override
@@ -362,21 +383,21 @@ public class MainActivity extends AppCompatActivity {
         int i=0;
         layout.removeAllViews();
         if (!((EditText)findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()){
-            int found = 0;
+            //int found = 0;
             for (String song_genre: category) {
                 if (song_genre.equals(((EditText)findViewById(R.id.search_genreEditText)).getText().toString())){
-                    found++;
+                    //found++;
                     getAllData(i);
                 }
                 i++;
             }
-            Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
         }
         else{
             for (int j = 0; j < songName.size(); j++) {
                 getAllData(j);
             }
-            Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
+            //Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
         }
 
     }
