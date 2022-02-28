@@ -10,4 +10,12 @@
     <string name="already_registered">Already registered?</string>
     <string name="login_here">Login here.</string>
     <string name="search_genre">Search by genre...</string>
+    <string-array name="genres">Genres
+        <item>Rap</item>
+        <item>Pop</item>
+        <item>Rock</item>
+        <item>Greek</item>
+    </string-array>
+    <string name="welcome">Welcome</string>
+    <string name="favourite_genre">Please select your favourite genre</string>
 </resources>
