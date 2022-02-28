@@ -1,32 +1,28 @@
 package com.unipi.mosdim.musicapp;
 
-import static android.view.Gravity.CENTER;
-import static android.view.Gravity.FILL_HORIZONTAL;
-
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
 
 
+import android.content.Context;
 import android.content.Intent;
-import android.graphics.PorterDuff;
-import android.graphics.drawable.Icon;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
-import android.view.Gravity;
+import android.text.Editable;
+import android.text.TextWatcher;
+import android.view.KeyEvent;
 import android.view.View;
-import android.view.ViewGroup;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
 import android.widget.ImageButton;
-import android.widget.ImageView;
 import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
@@ -43,21 +39,23 @@ import java.util.Date;
 public class MainActivity extends AppCompatActivity {
 
     SeekBar seekBar;
-    Button btnLogOut;
-    Button homeButton;
-    Button profileButton;
-    Button settingsButton;
+    Button buttonLogout;
+    ImageButton search_button;
+    Button homeButton, profileButton, settingsButton;
     FirebaseAuth mAuth;
-    LinearLayout layout,l, firstlayout;
+    LinearLayout layout;
     ScrollView scrollView;
     MediaPlayer mediaPlayer = new MediaPlayer();
     TextView movingText,minText,maxText;
-    Button playbtn,nextbtn,previousbtn;
-    ArrayList<String> songName = new ArrayList<>();
-    ArrayList<String> artistName = new ArrayList<>();
-    ArrayList<String> category = new ArrayList<>();
-    ArrayList<String> link = new ArrayList<>();
-    ArrayList<String> location = new ArrayList<>();
+    Button playButton, nextButton, previousButton;
+    EditText search;
+    ArrayList<String> songNames = new ArrayList<>();
+    ArrayList<String> artistNames = new ArrayList<>();
+    ArrayList<String> categories = new ArrayList<>();
+    ArrayList<String> links = new ArrayList<>();
+    ArrayList<String> locations = new ArrayList<>();
+    ArrayList<Button> buttons = new ArrayList<>();
+    ArrayList<Integer> arrayQueue = new ArrayList<>();
     String getLink="";
     int length=0,i;
 
@@ -71,12 +69,15 @@ public class MainActivity extends AppCompatActivity {
         homeButton = findViewById(R.id.homebutton);
         profileButton = findViewById(R.id.profilebutton);
         settingsButton = findViewById(R.id.settingsbutton);
+        search = findViewById(R.id.search_genreEditText);
+        search_button = findViewById(R.id.imageButton);
 
         homeButton.setOnClickListener(new View.OnClickListener(){
 
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),MainActivity.class);
+                Intent i = new Intent(MainActivity.this,MainActivity.class);
                 startActivity(i);
+                finish();
             }
 
         });
@@ -90,20 +91,60 @@ public class MainActivity extends AppCompatActivity {
 
         });
 
+        search.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if ((keyEvent.getAction()== KeyEvent.ACTION_DOWN) && (i == keyEvent.KEYCODE_ENTER)){
+                    search_button.performClick();
+
+                    //close keyboard
+                    View current_view = MainActivity.this.getCurrentFocus();
+                    if (current_view != null) {
+                        InputMethodManager manager =
+                                (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
+                        manager.hideSoftInputFromWindow(current_view.getWindowToken(), 0);
+                    }
+
+                    return true;
+                }
+                return false;
+            }
+        });
+
+        search.addTextChangedListener(new TextWatcher() {
+            @Override
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+
+            }
+
+            @Override
+            public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+                if((search.length() > 2 && i1<i2) || search.getText().toString().isEmpty())
+                    search_button.performClick();
+            }
+
+            @Override
+            public void afterTextChanged(Editable editable) {
+
+            }
+        });
 
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
         minText = findViewById(R.id.minTime);
         maxText = findViewById(R.id.maxTime);
         movingText = findViewById(R.id.movingText);
         movingText.setSelected(true);
-        btnLogOut = findViewById(R.id.btnLogout);
+        buttonLogout = findViewById(R.id.buttonLogout);
         mAuth = FirebaseAuth.getInstance();
-        playbtn = findViewById(R.id.playbtn);
-        nextbtn = findViewById(R.id.nextbtn);
-        previousbtn = findViewById(R.id.previousbtn);
-        btnLogOut.setOnClickListener(view -> {
+        playButton = findViewById(R.id.playButton);
+        nextButton = findViewById(R.id.nextButton);
+        previousButton = findViewById(R.id.previousButton);
+
+        buttonLogout.setOnClickListener(view -> {
             mAuth.signOut();
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
+            mediaPlayer.reset();
+            finish();
         });
         DatabaseReference myRef;
         myRef = FirebaseDatabase.getInstance("https://musicapp-ad62e-default-rtdb.firebaseio.com/").getReference().child("songs");
@@ -112,12 +153,12 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 i=0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    songName.add((String) snapshot.child("name").getValue());   //τιτλος βιβλιων
-                    artistName.add((String) snapshot.child("artist").getValue());
-                    link.add((String) snapshot.child("link").getValue());
-                    location.add((String) snapshot.child("location").getValue());
-                    category.add((String) snapshot.child("category").getValue());
-
+                    songNames.add((String) snapshot.child("name").getValue());   //τιτλος βιβλιων
+                    artistNames.add((String) snapshot.child("artist").getValue());
+                    links.add((String) snapshot.child("link").getValue());
+                    locations.add((String) snapshot.child("location").getValue());
+                    categories.add((String) snapshot.child("category").getValue());
+                    arrayQueue.add(i);
                     getAllData(i);
                     i++;
                 }
@@ -166,6 +207,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
+
     private Runnable mUpdateSeekbar = new Runnable() {
         @Override
         public void run() {
@@ -175,41 +217,40 @@ public class MainActivity extends AppCompatActivity {
         }
     };
 
+
     public void setTime(){
         String time =(new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getCurrentPosition()));
         minText.setText(time);
         if(minText.getText().equals(maxText.getText())){
             int y=0;
-            for (String element : link) {
+            for (String element : links) {
                 if (element == getLink) {
                     break;
                 }
                 y++;
             }
-            if(!link.contains(getLink)) {
-                playmusic(0);
+            if(!links.contains(getLink)) {
+                playMusic(0);
             }
-            if((link.size()-1)>y)
-                playmusic(y+1);
-            else if(link.size()-1<=y){
+            if((links.size()-1)>y) {
+                playMusic(y + 1);
+            }
+            else if(links.size()-1<=y){
                 getLink="";
-                playmusic(0);
+                playMusic(0);
             }
         }
     }
 
     public void getAllData(int i){
-
         //hardcoded components
         layout = findViewById(R.id.layout_parent);
         scrollView = findViewById(R.id.scrollView_parent);
 
-        LinearLayout.LayoutParams lparams = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
         LinearLayout.LayoutParams lparams_inside = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
         TextView t1 = new TextView(this);
-        //t1.setLayoutParams(lparams);
-        t1.setText(artistName.get(i));
+        t1.setText(artistNames.get(i));
 
         LinearLayout l1h = new LinearLayout(this);
         l1h.setWeightSum(1);    //controls the weights in l1v and playbtn
@@ -222,49 +263,48 @@ public class MainActivity extends AppCompatActivity {
         l1v.setLayoutParams(lparams_inside);
 
         TextView title1 = new TextView(this);
-        //title1.setLayoutParams(lparams);
-        title1.setText(songName.get(i));
+        title1.setText(songNames.get(i));
         l1v.addView(title1);
         l1v.addView(t1);
 
-        Button playbtn = new Button(this);
+        buttons.add(i,new Button(this));
         lparams_inside.weight = 1;
-        playbtn.setLayoutParams(lparams_inside);
-        playbtn.setText("Play");
-        playbtn.setId(i);
-        playbtn.setEnabled(true);
-        playbtn.setOnClickListener(new View.OnClickListener() {
+        buttons.get(i).setLayoutParams(lparams_inside);
+        buttons.get(i).setBackgroundResource(R.drawable.ic_small_play);
+        buttons.get(i).setEnabled(true);
+        buttons.get(i).setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
-                playmusic(i);
+                playMusic(i);
             }
         });
 
 
         l1h.addView(l1v);
-        l1h.addView(playbtn);
+        l1h.addView(buttons.get(i));
 
-        //firstlayout.addView(l1h);
         this.layout.addView(l1h);
     }
-
-    public void playmusic(int i){
-        if(!getLink.equals(link.get(i))) {
+    public void playMusic(int i){
+        if(!getLink.equals(links.get(i))) {
             mediaPlayer.reset();
             try {
-                mediaPlayer.setDataSource(link.get(i));
+                mediaPlayer.setDataSource(links.get(i));
                 mediaPlayer.setOnPreparedListener(new MediaPlayer.OnPreparedListener() {
                     @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
-                        playbtn.setBackgroundResource(R.drawable.pauseimg);
-                        getLink = link.get(i);
+                        for(Button btn1 : buttons)
+                            btn1.setBackgroundResource(R.drawable.ic_small_play);
+                        buttons.get(i).setBackgroundResource(R.drawable.ic_small_pause);
+                        playButton.setBackgroundResource(R.drawable.pauseimg);
+                        getLink = links.get(i);
                         maxText.setText((new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getDuration())));
                         seekBar.setMax(mediaPlayer.getDuration());
                         mediaPlayer.start();
                         mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
                         mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(1));
-                        movingText.setText(songName.get(i)+","+artistName.get(i));
+                        movingText.setText(songNames.get(i)+","+ artistNames.get(i));
                     }
                 });
                 mediaPlayer.prepare();
@@ -274,85 +314,108 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         else if(mediaPlayer.isPlaying()){
-            playbtn.setBackgroundResource(R.drawable.playimg);
+            buttons.get(i).setBackgroundResource(R.drawable.ic_small_play);
+            playButton.setBackgroundResource(R.drawable.playimg);
             mediaPlayer.pause();
             length = mediaPlayer.getCurrentPosition();
             mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
         }
         else{
-            playbtn.setBackgroundResource(R.drawable.pauseimg);
+            buttons.get(i).setBackgroundResource(R.drawable.ic_small_pause);
+            playButton.setBackgroundResource(R.drawable.pauseimg);
             mediaPlayer.start();
             mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
         }
     }
-    public void playclick(View view){
+
+    public void playClick(View view){
         int y=0;
-        for (String element : link) {
+        for (String element : links) {
             if (element == getLink) {
                 break;
             }
             y++;
         }
-        if(!link.contains(getLink))
+        if(!links.contains(getLink))
             y=0;
-        playmusic(y);
+        playMusic(y);
     }
 
-    public void previousbtn(View view) {
+    public void previousButton(View view) {
         int y = 0;
-        for (String element : link) {
-            if (element == getLink) {
-                break;
-            }
-            y++;
-        }
-        if (!link.contains(getLink))
-            y = 0;
-        if (y > 0)
-            playmusic(y - 1);
-        else {
-            getLink="";
-            playmusic(0);
-        }
-    }
-    public void nextbtn(View view){
-        int y=0;
-        for (String element : link) {
-            if (element == getLink) {
-                break;
-            }
-            y++;
-        }
-        if(!link.contains(getLink)) {
-            playmusic(0);
-        }
-        if((link.size()-1)>y)
-            playmusic(y+1);
-        else if(link.size()-1<=y){
-            getLink="";
-            playmusic(0);
-        }
-    }
 
+        if (arrayQueue.size() > 1) {
+            for (String element : links) {
+                if (!(links.get(arrayQueue.get(y)) == getLink)) {
+                    y++;
+                } else
+                    break;
+            }
+            if (!links.contains(getLink))
+                y = 0;
+            if (y > 0)
+                playMusic(arrayQueue.get(y - 1));
+            else {
+                getLink = "";
+                playMusic(arrayQueue.get(0));
+            }
+        }
+        else{
+            getLink = "";
+            playMusic(arrayQueue.get(0));
+        }
+    }
+    public void nextButton(View view){
+        int y=0;
+        if((arrayQueue.size()>1)) {
+            for (String element : links) {
+                if (!(links.get(arrayQueue.get(y)) == getLink)) {
+                    y++;
+                } else
+                    break;
+            }
+
+            if (!links.contains(getLink)) {
+                playMusic(0);
+            }
+            if ((arrayQueue.size() - 1) > y)
+                playMusic(arrayQueue.get(y + 1));
+            else if ((arrayQueue.size() - 1) <= y) {
+                getLink = "";
+                playMusic(arrayQueue.get(0));
+            }
+        }
+        else{
+            getLink = "";
+            playMusic(arrayQueue.get(0));
+        }
+    }
+    int updatedQueueSize=0;
     public void searchGenre(View view){
         int i=0;
         layout.removeAllViews();
+        arrayQueue.clear();
         if (!((EditText)findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()){
-            int found = 0;
-            for (String song_genre: category) {
+            //int found = 0;
+            for (String song_genre: categories) {
                 if (song_genre.equals(((EditText)findViewById(R.id.search_genreEditText)).getText().toString())){
-                    found++;
+                    //found++;
+                    arrayQueue.add(i);
                     getAllData(i);
                 }
                 i++;
             }
-            Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
+            updatedQueueSize = i;
+            //Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
         }
         else{
-            for (int j = 0; j < songName.size(); j++) {
+            int j;
+            for (j=0 ; j < songNames.size(); j++) {
+                arrayQueue.add(j);
                 getAllData(j);
             }
-            Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
+            updatedQueueSize = j;
+            //Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
         }
 
     }
