@@ -55,6 +55,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> links = new ArrayList<>();
     ArrayList<String> locations = new ArrayList<>();
     ArrayList<Button> buttons = new ArrayList<>();
+    ArrayList<Integer> arrayQueue = new ArrayList<>();
     String getLink="";
     int length=0,i;
 
@@ -157,7 +158,7 @@ public class MainActivity extends AppCompatActivity {
                     links.add((String) snapshot.child("link").getValue());
                     locations.add((String) snapshot.child("location").getValue());
                     categories.add((String) snapshot.child("category").getValue());
-
+                    arrayQueue.add(i);
                     getAllData(i);
                     i++;
                 }
@@ -284,7 +285,6 @@ public class MainActivity extends AppCompatActivity {
 
         this.layout.addView(l1h);
     }
-
     public void playMusic(int i){
         if(!getLink.equals(links.get(i))) {
             mediaPlayer.reset();
@@ -343,58 +343,78 @@ public class MainActivity extends AppCompatActivity {
 
     public void previousButton(View view) {
         int y = 0;
-        for (String element : links) {
-            if (element == getLink) {
-                break;
+
+        if (arrayQueue.size() > 1) {
+            for (String element : links) {
+                if (!(links.get(arrayQueue.get(y)) == getLink)) {
+                    y++;
+                } else
+                    break;
             }
-            y++;
+            if (!links.contains(getLink))
+                y = 0;
+            if (y > 0)
+                playMusic(arrayQueue.get(y - 1));
+            else {
+                getLink = "";
+                playMusic(arrayQueue.get(0));
+            }
         }
-        if (!links.contains(getLink))
-            y = 0;
-        if (y > 0)
-            playMusic(y - 1);
-        else {
-            getLink="";
-            playMusic(0);
+        else{
+            getLink = "";
+            playMusic(arrayQueue.get(0));
         }
     }
     public void nextButton(View view){
         int y=0;
-        for (String element : links) {
-            if (element == getLink) {
-                break;
+        if((arrayQueue.size()>1)) {
+            for (String element : links) {
+                if (!(links.get(arrayQueue.get(y)) == getLink)) {
+                    y++;
+                } else
+                    break;
             }
-            y++;
+
+            if (!links.contains(getLink)) {
+                playMusic(0);
+            }
+            if ((arrayQueue.size() - 1) > y)
+                playMusic(arrayQueue.get(y + 1));
+            else if ((arrayQueue.size() - 1) <= y) {
+                getLink = "";
+                playMusic(arrayQueue.get(0));
+            }
         }
-        if(!links.contains(getLink)) {
-            playMusic(0);
-        }
-        if((links.size()-1)>y)
-            playMusic(y+1);
-        else if(links.size()-1<=y){
-            getLink="";
-            playMusic(0);
+        else{
+            getLink = "";
+            playMusic(arrayQueue.get(0));
         }
     }
-
+    int updatedQueueSize=0;
     public void searchGenre(View view){
         int i=0;
         layout.removeAllViews();
+        arrayQueue.clear();
         if (!((EditText)findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()){
             //int found = 0;
             for (String song_genre: categories) {
                 if (song_genre.equals(((EditText)findViewById(R.id.search_genreEditText)).getText().toString())){
                     //found++;
+                    arrayQueue.add(i);
                     getAllData(i);
                 }
                 i++;
             }
+            updatedQueueSize = i;
             //Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
         }
         else{
-            for (int j = 0; j < songNames.size(); j++) {
+            int j;
+            for (j=0 ; j < songNames.size(); j++) {
+                arrayQueue.add(j);
                 getAllData(j);
             }
+            updatedQueueSize = j;
             //Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
         }
 
