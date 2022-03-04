@@ -65,7 +65,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     SeekBar seekBar;
     Button buttonLogout;
     ImageButton search_button;
-    Button homeButton, profileButton, settingsButton;
+    Button profileButton, settingsButton;
     FirebaseAuth mAuth;
     LinearLayout layout;
     ScrollView scrollView;
@@ -91,22 +91,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         setContentView(R.layout.activity_main);
 
         locman = (LocationManager) getSystemService(LOCATION_SERVICE);
-
-        homeButton = findViewById(R.id.homebutton);
         profileButton = findViewById(R.id.profilebutton);
         settingsButton = findViewById(R.id.settingsbutton);
         search = findViewById(R.id.search_genreEditText);
         search_button = findViewById(R.id.imageButton);
 
-        homeButton.setOnClickListener(new View.OnClickListener(){
-
-            public void onClick(View v) {
-                Intent i = new Intent(MainActivity.this,MainActivity.class);
-                startActivity(i);
-                finish();
-            }
-
-        });
 
         profileButton.setOnClickListener(new View.OnClickListener(){
 
@@ -189,18 +178,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         maxText = findViewById(R.id.maxTime);
         movingText = findViewById(R.id.movingText);
         movingText.setSelected(true);
-        buttonLogout = findViewById(R.id.buttonLogout);
+
         mAuth = FirebaseAuth.getInstance();
         playButton = findViewById(R.id.playButton);
         nextButton = findViewById(R.id.nextButton);
         previousButton = findViewById(R.id.previousButton);
 
-        buttonLogout.setOnClickListener(view -> {
-            mAuth.signOut();
-            startActivity(new Intent(MainActivity.this, LoginActivity.class));
-            mediaPlayer.reset();
-            finish();
-        });
         DatabaseReference myRef;
         myRef = FirebaseDatabase.getInstance("https://musicapp-ad62e-default-rtdb.firebaseio.com/").getReference().child("songs");
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {

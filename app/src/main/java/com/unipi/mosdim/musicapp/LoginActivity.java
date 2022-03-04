@@ -93,25 +93,31 @@ public class LoginActivity extends AppCompatActivity {
                 public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
 
                     for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                        userIDs.add(snapshot.getKey());
+                        userIDs.add(snapshot.getKey().toString());
+
                     }
+
+                    if(userIDs.contains(mAuth.getUid())) {
+                        startActivity(new Intent(LoginActivity.this , MainActivity.class));
+                        finish();
+                    }
+                    else {
+                        Intent intent = new Intent(LoginActivity.this , GenresActivity.class).putExtra("uid", mAuth.getUid());
+                        startActivity(intent);
+                        finish();
+                    }
+
                 }
 
                 @Override
                 public void onCancelled(@NonNull DatabaseError error) {
                 }
+
             });
+            System.out.println(userIDs);
 
             // Gets the unique user ID from Firebase and checks if the user has selected a favourite genre
-            if(userIDs.contains(mAuth.getUid())) {
-                startActivity(new Intent(LoginActivity.this , MainActivity.class));
-                finish();
-            }
-            else {
-                Intent intent = new Intent(LoginActivity.this , GenresActivity.class).putExtra("uid", mAuth.getUid());
-                startActivity(intent);
-                finish();
-            }
+
         }
     }
 }

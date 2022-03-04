@@ -8,8 +8,8 @@
 
     <ScrollView
         android:id="@+id/scrollView_parent"
-        android:layout_width="0dp"
-        android:layout_height="0dp"
+        android:layout_width="410dp"
+        android:layout_height="418dp"
         android:layout_marginTop="60dp"
         android:layout_marginBottom="31dp"
         app:layout_constraintBottom_toTopOf="@+id/movingText"
@@ -26,17 +26,6 @@
             android:layout_height="match_parent"
             android:orientation="vertical" />
     </ScrollView>
-
-    <Button
-        android:id="@+id/buttonLogout"
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:layout_marginTop="12dp"
-        android:layout_marginEnd="16dp"
-        android:text="@string/logout"
-        app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintTop_toTopOf="parent"
-        tools:ignore="MissingConstraints" />
 
     <SeekBar
         android:id="@+id/seekBar3"
@@ -71,7 +60,7 @@
         android:id="@+id/nextButton"
         android:layout_width="52dp"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:layout_weight="1"
         android:adjustViewBounds="true"
         android:background="@drawable/daco_5523381"
@@ -80,7 +69,7 @@
         android:padding="20dp"
         android:scaleType="fitCenter"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintHorizontal_bias="0.261"
+        app:layout_constraintHorizontal_bias="0.312"
         app:layout_constraintStart_toEndOf="@+id/playButton"
         app:layout_constraintTop_toBottomOf="@+id/seekBar3" />
 
@@ -98,49 +87,37 @@
         app:layout_constraintTop_toBottomOf="@+id/seekBar3" />
 
     <Button
-        android:id="@+id/homebutton"
-        android:layout_width="47dp"
-        android:layout_height="33dp"
-        android:layout_marginTop="8dp"
-        android:background="@drawable/ic_baseline_home_24"
-        app:layout_constraintEnd_toEndOf="@+id/previousButton"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/previousButton"
-        app:layout_constraintTop_toBottomOf="@+id/previousButton" />
-
-    <Button
         android:id="@+id/previousButton"
         android:layout_width="52dp"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:layout_weight="1"
         android:adjustViewBounds="true"
+        android:background="@drawable/playpreviousimg"
         android:clickable="true"
         android:onClick="previousButton"
         android:padding="20dp"
         android:scaleType="centerCrop"
-        android:background="@drawable/playpreviousimg"
         app:layout_constraintEnd_toStartOf="@+id/playButton"
-        app:layout_constraintHorizontal_bias="0.581"
+        app:layout_constraintHorizontal_bias="0.685"
         app:layout_constraintStart_toStartOf="@+id/seekBar3"
         app:layout_constraintTop_toBottomOf="@+id/seekBar3" />
 
     <Button
         android:id="@+id/profilebutton"
-        android:layout_width="57dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="44dp"
+        android:layout_height="36dp"
+        android:layout_marginStart="12dp"
+        android:layout_marginTop="12dp"
         android:background="@drawable/ic_baseline_person_24"
-        app:layout_constraintEnd_toEndOf="@+id/playButton"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/playButton"
-        app:layout_constraintTop_toBottomOf="@+id/playButton" />
+        app:layout_constraintStart_toEndOf="@+id/search_genreEditText"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <Button
         android:id="@+id/playButton"
         android:layout_width="52dp"
         android:layout_height="50dp"
-        android:layout_marginTop="20dp"
+        android:layout_marginTop="40dp"
         android:layout_weight="1"
         android:adjustViewBounds="false"
         android:background="@drawable/playimg"
@@ -154,14 +131,13 @@
 
     <Button
         android:id="@+id/settingsbutton"
-        android:layout_width="47dp"
-        android:layout_height="33dp"
-        android:layout_marginTop="8dp"
+        android:layout_width="38dp"
+        android:layout_height="34dp"
+        android:layout_marginTop="16dp"
+        android:layout_marginEnd="16dp"
         android:background="@drawable/ic_baseline_settings_24"
-        app:layout_constraintEnd_toEndOf="@+id/nextButton"
-        app:layout_constraintHorizontal_bias="1.0"
-        app:layout_constraintStart_toStartOf="@+id/nextButton"
-        app:layout_constraintTop_toBottomOf="@+id/nextButton" />
+        app:layout_constraintEnd_toEndOf="parent"
+        app:layout_constraintTop_toTopOf="parent" />
 
     <TextView
         android:id="@+id/maxTime"
@@ -194,13 +170,13 @@
         android:layout_width="44dp"
         android:layout_height="40dp"
         android:layout_marginTop="12dp"
+        android:backgroundTint="@color/transparent"
         android:onClick="searchGenre"
         app:layout_constraintEnd_toEndOf="@+id/search_genreEditText"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/search_genreEditText"
         app:layout_constraintTop_toTopOf="parent"
         app:srcCompat="@android:drawable/ic_menu_search"
-        android:backgroundTint="@color/transparent"
         tools:ignore="TouchTargetSizeCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
