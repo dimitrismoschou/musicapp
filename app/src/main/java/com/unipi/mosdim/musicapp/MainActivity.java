@@ -352,6 +352,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         l1h.addView(l1v);
         l1h.addView(buttons.get(i));
 
+        l1h.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                buttons.get(i).performClick();
+            }
+        });
+
+        if (i%2!=0){
+            l1h.setBackgroundResource(R.color.lightgray);
+        }
+
         this.layout.addView(l1h);
     }
     public void playMusic(int i){

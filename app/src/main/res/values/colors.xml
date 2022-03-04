@@ -10,4 +10,5 @@
     <color name="red7000">#700000</color>
     <color name="transparent">#00000000</color>
     <color name="red9000">#900000</color>
+    <color name="lightgray">#D3D3D3</color>
 </resources>
