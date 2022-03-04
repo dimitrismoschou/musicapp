@@ -3,10 +3,19 @@ package com.unipi.mosdim.musicapp;
 import androidx.annotation.NonNull;
 import androidx.annotation.RequiresApi;
 import androidx.appcompat.app.AppCompatActivity;
+import androidx.core.app.ActivityCompat;
 
 
+import android.Manifest;
 import android.content.Context;
 import android.content.Intent;
+import android.content.IntentSender;
+import android.content.pm.PackageManager;
+import android.location.Address;
+import android.location.Geocoder;
+import android.location.Location;
+import android.location.LocationListener;
+import android.location.LocationManager;
 import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
@@ -23,7 +32,17 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
+import android.widget.Toast;
 
+import com.google.android.gms.common.api.ApiException;
+import com.google.android.gms.common.api.ResolvableApiException;
+import com.google.android.gms.location.LocationRequest;
+import com.google.android.gms.location.LocationServices;
+import com.google.android.gms.location.LocationSettingsRequest;
+import com.google.android.gms.location.LocationSettingsResponse;
+import com.google.android.gms.location.LocationSettingsStatusCodes;
+import com.google.android.gms.tasks.OnCompleteListener;
+import com.google.android.gms.tasks.Task;
 import com.google.firebase.auth.FirebaseAuth;
 import com.google.firebase.database.DataSnapshot;
 import com.google.firebase.database.DatabaseError;
@@ -35,8 +54,13 @@ import java.io.IOException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Date;
+import java.util.List;
 
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends AppCompatActivity implements LocationListener {
+
+    LocationManager locman;
+    static final int REQ_LOC_CODE = 23;
+    private double latitude, longitude;
 
     SeekBar seekBar;
     Button buttonLogout;
@@ -56,7 +80,7 @@ public class MainActivity extends AppCompatActivity {
     ArrayList<String> locations = new ArrayList<>();
     ArrayList<Button> buttons = new ArrayList<>();
     ArrayList<Integer> arrayQueue = new ArrayList<>();
-    String getLink="";
+    String getLink="", country = "none";
     int length=0,i;
 
     private Handler mSeekbarUpdateHandler = new Handler();
@@ -65,6 +89,8 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+        locman = (LocationManager) getSystemService(LOCATION_SERVICE);
 
         homeButton = findViewById(R.id.homebutton);
         profileButton = findViewById(R.id.profilebutton);
@@ -129,6 +155,35 @@ public class MainActivity extends AppCompatActivity {
             }
         });
 
+        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) &&
+                (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_CODE);
+        }
+        else {
+            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
+
+        Location location = null;
+        if (locman.isProviderEnabled(LocationManager.GPS_PROVIDER)){
+            //maybe an onTaskCompleteListener would fit here instead of while
+            while (locman.getLastKnownLocation(LocationManager.GPS_PROVIDER)==null){
+                continue;
+            }
+            location = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            onLocationChanged(location);
+            currentCountry(location);
+        }
+        else {
+            enableLoc();
+        }
+
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
         minText = findViewById(R.id.minTime);
         maxText = findViewById(R.id.maxTime);
@@ -153,14 +208,28 @@ public class MainActivity extends AppCompatActivity {
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 i=0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    songNames.add((String) snapshot.child("name").getValue());   //τιτλος βιβλιων
-                    artistNames.add((String) snapshot.child("artist").getValue());
-                    links.add((String) snapshot.child("link").getValue());
-                    locations.add((String) snapshot.child("location").getValue());
-                    categories.add((String) snapshot.child("category").getValue());
-                    arrayQueue.add(i);
-                    getAllData(i);
-                    i++;
+
+                    if (country.equals("none")){
+                        songNames.add((String) snapshot.child("name").getValue());
+                        artistNames.add((String) snapshot.child("artist").getValue());
+                        links.add((String) snapshot.child("link").getValue());
+                        locations.add((String) snapshot.child("location").getValue());
+                        categories.add((String) snapshot.child("category").getValue());
+                        arrayQueue.add(i);
+                        getAllData(i);
+                        i++;
+                    }
+                    else if (snapshot.child("location").getValue().toString().toLowerCase().contains(country)){
+                        songNames.add((String) snapshot.child("name").getValue());
+                        artistNames.add((String) snapshot.child("artist").getValue());
+                        links.add((String) snapshot.child("link").getValue());
+                        locations.add((String) snapshot.child("location").getValue());
+                        categories.add((String) snapshot.child("category").getValue());
+                        arrayQueue.add(i);
+                        getAllData(i);
+                        i++;
+                    }
+
                 }
             }
 
@@ -431,4 +500,122 @@ public class MainActivity extends AppCompatActivity {
             mAuth.getCurrentUser();
         }
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+
+        if (requestCode == REQ_LOC_CODE && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                    != PackageManager.PERMISSION_GRANTED) {
+                return;
+            }
+            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
+    }
+
+    /**
+     * Runs every time gps gets new location
+     * @param location
+     */
+    @Override
+    public void onLocationChanged(@NonNull Location location) {
+        longitude = location.getLongitude();
+        latitude = location.getLatitude();
+    }
+
+    /**
+     * Runs every time user activates gps after prompt window
+     * @param provider
+     */
+    @Override
+    public void onProviderEnabled(@NonNull String provider) {
+        Intent intent = getIntent();
+        finish();
+        startActivity(intent);
+    }
+
+    /**
+     * Ignore
+     * @param provider
+     */
+    @Override
+    public void onProviderDisabled(@NonNull String provider) {
+    }
+
+    /**
+     * Writes the current country's name to country
+     * @param location
+     */
+    private void currentCountry (Location location){
+        try {
+            Geocoder geocoder = new Geocoder(this);
+            List<Address> addresses = null;
+            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            country = addresses.get(0).getCountryName().toLowerCase();
+        } catch (IOException e){
+            e.printStackTrace();
+        } catch (Exception e){
+            e.printStackTrace();
+        }
+    }
+
+    /**
+     * Opens a popup window every time location is off, prompting user to enabled it
+     */
+    private void enableLoc() {
+        LocationRequest locationRequest = LocationRequest.create();
+        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setInterval(30 * 1000);
+        locationRequest.setFastestInterval(5 * 1000);
+
+
+        LocationSettingsRequest.Builder builder = new LocationSettingsRequest.Builder()
+                .addLocationRequest(locationRequest);
+
+        builder.setAlwaysShow(true);
+
+        Task<LocationSettingsResponse> result =
+                LocationServices.getSettingsClient(this).checkLocationSettings(builder.build());
+
+        result.addOnCompleteListener(new OnCompleteListener<LocationSettingsResponse>() {
+
+
+            @Override
+            public void onComplete(Task<LocationSettingsResponse> task) {
+                try {
+                    LocationSettingsResponse response = task.getResult(ApiException.class);
+                    // All location settings are satisfied. The client can initialize location
+                    // requests here.
+
+                } catch (ApiException exception) {
+                    switch (exception.getStatusCode()) {
+                        case LocationSettingsStatusCodes.RESOLUTION_REQUIRED:
+                            // Location settings are not satisfied. But could be fixed by showing the
+                            // user a dialog.
+                            try {
+                                // Cast to a resolvable exception.
+                                ResolvableApiException resolvable = (ResolvableApiException) exception;
+                                // Show the dialog by calling startResolutionForResult(),
+                                // and check the result in onActivityResult().
+                                resolvable.startResolutionForResult(
+                                        MainActivity.this,
+                                        999);
+                            } catch (IntentSender.SendIntentException e) {
+                                // Ignore the error.
+                            } catch (ClassCastException e) {
+                                // Ignore, should be an impossible error.
+                            }
+                            break;
+                        case LocationSettingsStatusCodes.SETTINGS_CHANGE_UNAVAILABLE:
+                            // Location settings are not satisfied. However, we have no way to fix the
+                            // settings so we won't show the dialog.
+                            break;
+                    }
+                }
+            }
+        });
+
+    }
+    
 }
