@@ -40,6 +40,8 @@ public class RegisterActivity extends AppCompatActivity {
             createUser();
         });
 
+
+
         tvLoginHere.setOnClickListener(view ->{
             startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
         });
@@ -62,8 +64,7 @@ public class RegisterActivity extends AppCompatActivity {
                 public void onComplete(@NonNull Task<AuthResult> task) {
                     if (task.isSuccessful()){
                         Toast.makeText(RegisterActivity.this, "User registered successfully", Toast.LENGTH_SHORT).show();
-                        //startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
-                        startActivity(new Intent(RegisterActivity.this, GenresActivity.class));
+                        startActivity(new Intent(RegisterActivity.this, LoginActivity.class));
                         finish();
                     }else{
                         Toast.makeText(RegisterActivity.this, "Registration Error: " + task.getException().getMessage(), Toast.LENGTH_SHORT).show();

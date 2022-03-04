@@ -7,5 +7,7 @@
     <color name="teal_700">#FF018786</color>
     <color name="purple_500">#6302FF</color>
     <color name="white">#FFFFFFFF</color>
-    <color name="red9000">#red</color>
+    <color name="red7000">#700000</color>
+    <color name="transparent">#00000000</color>
+    <color name="red9000">#900000</color>
 </resources>
