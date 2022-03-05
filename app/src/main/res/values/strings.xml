@@ -18,4 +18,5 @@
     </string-array>
     <string name="welcome">Welcome</string>
     <string name="favourite_genre">Please select your favourite genre</string>
+    <string name="update">Update</string>
 </resources>

@@ -7,9 +7,10 @@
     tools:context=".SettingsActivity">
 
     <Button
-                android:layout_width="match_parent"
-                android:layout_height="wrap_content"
-                android:id="@+id/buttonLogout"
-                android:text="@string/logout"/>
+        android:id="@+id/buttonLogout"
+        android:layout_width="match_parent"
+        android:layout_height="wrap_content"
+        android:onClick="logout"
+        android:text="@string/logout" />
 
 </LinearLayout>

@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">musicapp</string>
-    <string name="logout">Έξοδος</string>
     <string name="login">Είσοδος</string>
     <string name="email">Λογαριασμός ηλ. ταχυδρομίου</string>
     <string name="password">Κωδικός</string>
