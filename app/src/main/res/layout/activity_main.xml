@@ -173,12 +173,11 @@
         android:layout_height="40dp"
         android:layout_marginTop="12dp"
         android:backgroundTint="@color/transparent"
-        android:onClick="searchGenre"
         app:layout_constraintEnd_toEndOf="@+id/search_genreEditText"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/search_genreEditText"
         app:layout_constraintTop_toTopOf="parent"
-        app:srcCompat="@android:drawable/ic_menu_search"
+        app:srcCompat="@android:drawable/ic_btn_speak_now"
         tools:ignore="TouchTargetSizeCheck" />
 
 </androidx.constraintlayout.widget.ConstraintLayout>
