@@ -470,7 +470,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         if (!((EditText)findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()){
             //int found = 0;
             for (String song_genre: categories) {
-                if (song_genre.equals(((EditText)findViewById(R.id.search_genreEditText)).getText().toString())){
+                if (song_genre.equals(((EditText)findViewById(R.id.search_genreEditText)).getText().toString().toLowerCase())){
                     //found++;
                     arrayQueue.add(i);
                     getAllData(i);
@@ -504,18 +504,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
     }
 
-    @Override
-    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
 
-        if (requestCode == REQ_LOC_CODE && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                    != PackageManager.PERMISSION_GRANTED) {
-                return;
-            }
-            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-        }
-    }
 
     /**
      * Runs every time gps gets new location
@@ -621,22 +610,78 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
+    @RequiresApi(api = Build.VERSION_CODES.M)
     public void voiceRec(View view){
-        Intent intent
-                = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-                RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-        intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
-                Locale.getDefault());
-        intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text");
-        try {
-            startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT); }
-        catch (Exception e) {
-            Toast
-                    .makeText(MainActivity.this, " " + e.getMessage(),
-                            Toast.LENGTH_SHORT).show(); }
+        ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE_SPEECH_INPUT);
 
     }
+
+    @Override
+    public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        switch(requestCode){
+            case REQ_LOC_CODE:{
+                if(grantResults[0]== PackageManager.PERMISSION_GRANTED && grantResults.length>0){
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+                            != PackageManager.PERMISSION_GRANTED) {
+                        return;
+                    }
+
+                }
+                else
+                    locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                break;
+            }
+            case REQUEST_CODE_SPEECH_INPUT:{
+
+                if(grantResults[0]== PackageManager.PERMISSION_GRANTED && grantResults.length>0){
+                    Intent intent
+                            = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+                            RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+                    intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+                            Locale.getDefault());
+                    intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text");
+                    try {
+                        startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT); }
+                    catch (Exception e) {
+                        Toast
+                                .makeText(MainActivity.this, " " + e.getMessage(),
+                                        Toast.LENGTH_SHORT).show(); }
+                }
+                else
+                    Toast.makeText(MainActivity.this, "For speech to text you need to grand permission", Toast.LENGTH_SHORT).show();
+                break;
+            }
+
+
+
+        }
+
+//        if (requestCode == REQ_LOC_CODE && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
+//                    != PackageManager.PERMISSION_GRANTED) {
+//                return;
+//            }
+//            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+//        }
+//        else if(requestCode == REQUEST_CODE_SPEECH_INPUT && grantResults[0]== PackageManager.PERMISSION_GRANTED){
+//            Intent intent
+//                    = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
+//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
+//                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
+//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
+//                    Locale.getDefault());
+//            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text");
+//            try {
+//                startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT); }
+//            catch (Exception e) {
+//                Toast
+//                        .makeText(MainActivity.this, " " + e.getMessage(),
+//                                Toast.LENGTH_SHORT).show(); }
+//        }
+    }
+
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
