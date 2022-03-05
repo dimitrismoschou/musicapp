@@ -3,9 +3,13 @@ package com.unipi.mosdim.musicapp;
 import androidx.annotation.NonNull;
 import androidx.appcompat.app.AppCompatActivity;
 
+import android.content.Context;
 import android.content.Intent;
 import android.os.Bundle;
 import android.text.TextUtils;
+import android.view.KeyEvent;
+import android.view.View;
+import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.Toast;
 
@@ -36,9 +40,19 @@ public class UserProfile extends AppCompatActivity {
         edit_email = findViewById(R.id.edit_email);
         edit_password = findViewById(R.id.edit_password);
         update_button = findViewById(R.id.update_button);
-
+        update_button.setEnabled(false);
         mAuth = FirebaseAuth.getInstance();
-
+        edit_password.setOnKeyListener(new View.OnKeyListener() {
+            @Override
+            public boolean onKey(View view, int i, KeyEvent keyEvent) {
+                if (edit_password.length()>5){
+                    update_button.setEnabled(true);
+                }
+                else
+                    update_button.setEnabled(false);
+                return false;
+            }
+        });
         update_button.setOnClickListener(view -> {
             updateUser();
         });
