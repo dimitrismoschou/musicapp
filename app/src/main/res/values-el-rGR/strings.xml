@@ -1,7 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
     <string name="app_name">musicapp</string>
-    <string name="logout">Έξοδος</string>
     <string name="login">Είσοδος</string>
     <string name="email">Λογαριασμός ηλ. ταχυδρομίου</string>
     <string name="password">Κωδικός</string>
@@ -13,4 +12,6 @@
     <string name="search_genre">Αναζήτηση βάσει είδους...</string>
     <string name="welcome">Καλώς ήρθες</string>
     <string name="favourite_genre">Παρακαλώ επιλέξτε το αγαπημένο σας είδος μουσικής</string>
+    <string name="update">Ενημέρωση</string>
+    <string name="logout">ΑΠΟΣΥΝΔΕΣΗ</string>
 </resources>

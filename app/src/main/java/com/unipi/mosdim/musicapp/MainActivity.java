@@ -32,7 +32,6 @@ import android.widget.LinearLayout;
 import android.widget.ScrollView;
 import android.widget.SeekBar;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.google.android.gms.common.api.ApiException;
 import com.google.android.gms.common.api.ResolvableApiException;
@@ -69,7 +68,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     FirebaseAuth mAuth;
     LinearLayout layout;
     ScrollView scrollView;
-    MediaPlayer mediaPlayer = new MediaPlayer();
+    public static MediaPlayer mediaPlayer = new MediaPlayer();
     TextView movingText,minText,maxText;
     Button playButton, nextButton, previousButton;
     EditText search;
@@ -259,6 +258,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
+
+    public void settings(View view){
+        Intent i = new Intent(getApplicationContext(),SettingsActivity.class);
+        startActivity(i);
+    }
 
     private Runnable mUpdateSeekbar = new Runnable() {
         @Override
