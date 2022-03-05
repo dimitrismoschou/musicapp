@@ -109,7 +109,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction()== KeyEvent.ACTION_DOWN) && (i == keyEvent.KEYCODE_ENTER)){
-                    search_button.performClick();
+                    searchGenre();
 
                     //close keyboard
                     View current_view = MainActivity.this.getCurrentFocus();
@@ -134,7 +134,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if((search.length() > 2 && i1<i2) || search.getText().toString().isEmpty())
-                    search_button.performClick();
+                    searchGenre();
             }
 
             @Override
@@ -458,7 +458,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
     }
     int updatedQueueSize=0;
-    public void searchGenre(View view){
+    public void searchGenre(){
         int i=0;
         layout.removeAllViews();
         arrayQueue.clear();
