@@ -202,7 +202,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         getAllData(i);
                         i++;
                     }
-                    else if (snapshot.child("location").getValue().toString().toLowerCase().contains(country)){
+                    else if (snapshot.child("location").getValue().toString().contains(country)){
                         songNames.add((String) snapshot.child("name").getValue());
                         artistNames.add((String) snapshot.child("artist").getValue());
                         links.add((String) snapshot.child("link").getValue());
@@ -546,7 +546,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             Geocoder geocoder = new Geocoder(this);
             List<Address> addresses = null;
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
-            country = addresses.get(0).getCountryName().toLowerCase();
+            country = addresses.get(0).getCountryCode();
         } catch (IOException e){
             e.printStackTrace();
         } catch (Exception e){
