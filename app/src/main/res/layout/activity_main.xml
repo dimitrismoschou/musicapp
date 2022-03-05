@@ -173,6 +173,7 @@
         android:layout_height="40dp"
         android:layout_marginTop="12dp"
         android:backgroundTint="@color/transparent"
+        android:onClick="voiceRec"
         app:layout_constraintEnd_toEndOf="@+id/search_genreEditText"
         app:layout_constraintHorizontal_bias="1.0"
         app:layout_constraintStart_toStartOf="@+id/search_genreEditText"
