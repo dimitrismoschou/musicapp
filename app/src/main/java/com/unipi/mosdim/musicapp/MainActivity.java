@@ -278,23 +278,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         String time =(new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getCurrentPosition()));
         minText.setText(time);
         if(minText.getText().equals(maxText.getText())){
-            int y=0;
-            for (String element : links) {
-                if (element == getLink) {
-                    break;
-                }
-                y++;
-            }
-            if(!links.contains(getLink)) {
-                playMusic(0);
-            }
-            if((links.size()-1)>y) {
-                playMusic(y + 1);
-            }
-            else if(links.size()-1<=y){
-                getLink="";
-                playMusic(0);
-            }
+            nextButton.performClick();
         }
     }
 
@@ -351,6 +335,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
 
         this.layout.addView(l1h);
+
     }
     public void playMusic(int i){
         if(!getLink.equals(links.get(i))) {
@@ -469,6 +454,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     //found++;
                     arrayQueue.add(i);
                     getAllData(i);
+                    if(mediaPlayer.isPlaying()) {
+                        for(int k=0;k<2;k++){
+                            int y = 0;
+                            for (String element : links) {
+                                if (element == getLink) {
+                                    break;
+                                }
+                                y++;
+                            }
+                            if (!links.contains(getLink))
+                                y = 0;
+                            playMusic(y);
+                        }
+                    }
                 }
                 i++;
             }
@@ -480,6 +479,20 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             for (j=0 ; j < songNames.size(); j++) {
                 arrayQueue.add(j);
                 getAllData(j);
+                if(mediaPlayer.isPlaying()) {
+                    for(int k=0;k<2;k++){
+                        int y = 0;
+                        for (String element : links) {
+                            if (element == getLink) {
+                                break;
+                            }
+                            y++;
+                        }
+                        if (!links.contains(getLink))
+                            y = 0;
+                        playMusic(y);
+                    }
+                }
             }
             updatedQueueSize = j;
             //Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
