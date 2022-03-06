@@ -67,7 +67,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     private double latitude, longitude;
     private static final int REQUEST_CODE_SPEECH_INPUT = 1;
     SeekBar seekBar;
-    Button buttonLogout;
     ImageButton search_button;
     Button profileButton, settingsButton;
     FirebaseAuth mAuth;
@@ -220,6 +219,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             arrayQueue.add(i);
                             getAllData(i);
                             i++;
+                            search.setEnabled(false);
                         }
                     }
 //                    else if (snapshot.child("location").getValue().toString().contains(country)){
