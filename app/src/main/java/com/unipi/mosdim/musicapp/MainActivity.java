@@ -74,6 +74,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     LinearLayout layout;
     ScrollView scrollView;
     public static MediaPlayer mediaPlayer = new MediaPlayer();
+    public static String preference="";
+    public static String uid="";
     TextView movingText,minText,maxText;
     Button playButton, nextButton, previousButton;
     EditText search;
@@ -195,27 +197,41 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
                 i=0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-
-                    if (country.equals("none")){
-                        songNames.add((String) snapshot.child("name").getValue());
-                        artistNames.add((String) snapshot.child("artist").getValue());
-                        links.add((String) snapshot.child("link").getValue());
-                        locations.add((String) snapshot.child("location").getValue());
-                        categories.add((String) snapshot.child("category").getValue());
-                        arrayQueue.add(i);
-                        getAllData(i);
-                        i++;
+                    if(preference=="") {
+                        if (country.equals("none") || snapshot.child("location").getValue().toString().contains(country)) {
+                            songNames.add((String) snapshot.child("name").getValue());
+                            artistNames.add((String) snapshot.child("artist").getValue());
+                            links.add((String) snapshot.child("link").getValue());
+                            locations.add((String) snapshot.child("location").getValue());
+                            categories.add((String) snapshot.child("category").getValue());
+                            arrayQueue.add(i);
+                            getAllData(i);
+                            i++;
+                        }
                     }
-                    else if (snapshot.child("location").getValue().toString().contains(country)){
-                        songNames.add((String) snapshot.child("name").getValue());
-                        artistNames.add((String) snapshot.child("artist").getValue());
-                        links.add((String) snapshot.child("link").getValue());
-                        locations.add((String) snapshot.child("location").getValue());
-                        categories.add((String) snapshot.child("category").getValue());
-                        arrayQueue.add(i);
-                        getAllData(i);
-                        i++;
+                    else{
+                        if ((country.equals("none") || snapshot.child("location").getValue().toString().contains(country))
+                                &&snapshot.child("category").getValue().toString().equals(preference)) {
+                            songNames.add((String) snapshot.child("name").getValue());
+                            artistNames.add((String) snapshot.child("artist").getValue());
+                            links.add((String) snapshot.child("link").getValue());
+                            locations.add((String) snapshot.child("location").getValue());
+                            categories.add((String) snapshot.child("category").getValue());
+                            arrayQueue.add(i);
+                            getAllData(i);
+                            i++;
+                        }
                     }
+//                    else if (snapshot.child("location").getValue().toString().contains(country)){
+//                        songNames.add((String) snapshot.child("name").getValue());
+//                        artistNames.add((String) snapshot.child("artist").getValue());
+//                        links.add((String) snapshot.child("link").getValue());
+//                        locations.add((String) snapshot.child("location").getValue());
+//                        categories.add((String) snapshot.child("category").getValue());
+//                        arrayQueue.add(i);
+//                        getAllData(i);
+//                        i++;
+//                    }
 
                 }
             }
@@ -334,11 +350,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 buttons.get(i).performClick();
             }
         });
-
-        if (i%2!=0){
-            l1h.setBackgroundResource(R.color.lightgray);
-        }
-
         this.layout.addView(l1h);
 
     }
@@ -513,6 +524,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
         }
         else {
+            uid = user;
             mAuth.getCurrentUser();
         }
     }
@@ -704,6 +716,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             if (resultCode == RESULT_OK && data != null) {
                 ArrayList<String> result = data.getStringArrayListExtra(
                         RecognizerIntent.EXTRA_RESULTS);
+                search.setText("");
                 search.setText(
                         Objects.requireNonNull(result).get(0).toLowerCase());
 }}}

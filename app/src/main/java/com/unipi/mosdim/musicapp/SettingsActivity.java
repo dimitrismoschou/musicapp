@@ -26,5 +26,8 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
         MainActivity.mediaPlayer.reset();
         finish();
+//        MainActivity.mediaPlayer.reset();
+//        MainActivity.preference = "greek"; MainActivity.uid
+//        startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
     }
 }
