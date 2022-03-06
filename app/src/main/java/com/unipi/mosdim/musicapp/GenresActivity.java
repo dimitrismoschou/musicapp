@@ -38,7 +38,7 @@ public class GenresActivity extends AppCompatActivity {
              myRef = db.getReference().child("user_pref");
              DatabaseReference ref1 = myRef.child(extras.getString("uid"));
              DatabaseReference ref2 = ref1.child("genre");
-             ref2.setValue(genresSpinner.getSelectedItem().toString());
+             ref2.setValue(genresSpinner.getSelectedItem().toString().toLowerCase());
              startActivity(new Intent(GenresActivity.this, MainActivity.class));
              finish();
          });
