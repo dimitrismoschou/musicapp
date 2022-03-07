@@ -219,6 +219,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                     if(preference=="") {
                         if (country.equals("none") || snapshot.child("location").getValue().toString().contains(country)) {
+                            search.setEnabled(true);
+                            search_button.setEnabled(true);
                             songNames.add((String) snapshot.child("name").getValue());
                             artistNames.add((String) snapshot.child("artist").getValue());
                             links.add((String) snapshot.child("link").getValue());
@@ -232,6 +234,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     else{
                         if ((country.equals("none") || snapshot.child("location").getValue().toString().contains(country))
                                 &&snapshot.child("category").getValue().toString().equals(preference.toLowerCase())) {
+                            search.setEnabled(false);
+                            search_button.setEnabled(false);
                             SettingsActivity.switcher=true;
                             songNames.add((String) snapshot.child("name").getValue());
                             artistNames.add((String) snapshot.child("artist").getValue());
@@ -671,7 +675,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 if(grantResults[0]== PackageManager.PERMISSION_GRANTED && grantResults.length>0){
                     if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
                             != PackageManager.PERMISSION_GRANTED) {
-                        return;
+                        Toast.makeText(MainActivity.this, "For location capabilities you need to grand GPS permission", Toast.LENGTH_SHORT).show();
                     }
 
                 }
