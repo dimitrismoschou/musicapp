@@ -124,12 +124,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
 
         profileButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), UserProfile.class);
                 startActivity(i);
             }
-
         });
 
         search.setOnKeyListener(new View.OnKeyListener() {
@@ -137,7 +135,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == keyEvent.KEYCODE_ENTER)) {
                     searchGenre();
-
                     //close keyboard
                     View current_view = MainActivity.this.getCurrentFocus();
                     if (current_view != null) {
@@ -145,7 +142,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                 (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         manager.hideSoftInputFromWindow(current_view.getWindowToken(), 0);
                     }
-
                     return true;
                 }
                 return false;
@@ -154,31 +150,18 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if ((search.length() > 2 && i1 < i2) || search.getText().toString().isEmpty())
                     searchGenre();
             }
-
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) {}
         });
 
         if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) &&
                 (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
             ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_CODE);
         } else {
             locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
@@ -186,10 +169,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         Location location = null;
         if (locman.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            //maybe an onTaskCompleteListener would fit here instead of while
-            while (locman.getLastKnownLocation(LocationManager.GPS_PROVIDER) == null) {
-                continue;
-            }
             location = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
             onLocationChanged(location);
             currentCountry(location);
@@ -259,18 +238,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 if (fromUser)
                     mediaPlayer.seekTo(progress);
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
-
     }
 
 
@@ -334,7 +308,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         });
 
-
         l1h.addView(l1v);
         l1h.addView(buttons.get(i));
 
@@ -345,7 +318,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         });
         this.layout.addView(l1h);
-
     }
 
     public void playMusic(int i) {
@@ -403,7 +375,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public void previousButton(View view) {
         int y = 0;
-
         if (arrayQueue.size() > 1) {
             for (String element : links) {
                 if (!(links.get(arrayQueue.get(y)) == getLink)) {
@@ -434,7 +405,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 } else
                     break;
             }
-
             if (!links.contains(getLink)) {
                 playMusic(0);
             }
@@ -457,10 +427,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         layout.removeAllViews();
         arrayQueue.clear();
         if (!((EditText) findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()) {
-            //int found = 0;
             for (String song_genre : categories) {
                 if (song_genre.equals(((EditText) findViewById(R.id.search_genreEditText)).getText().toString().toLowerCase())) {
-                    //found++;
                     arrayQueue.add(i);
                     getAllData(i);
                     if (mediaPlayer.isPlaying()) {
@@ -481,7 +449,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 i++;
             }
             updatedQueueSize = i;
-            //Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
         } else {
             int j;
             for (j = 0; j < songNames.size(); j++) {
@@ -503,7 +470,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
             }
             updatedQueueSize = j;
-            //Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -622,7 +588,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
             }
         });
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -676,36 +641,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                         Toast.LENGTH_SHORT).show(); }
                 }
                 else
-                    Toast.makeText(MainActivity.this, "For speech to text you need to grand permission", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.reject_voice, Toast.LENGTH_SHORT).show();
                 break;
             }
-
-
-
         }
-
-//        if (requestCode == REQ_LOC_CODE && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-//                    != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//        }
-//        else if(requestCode == REQUEST_CODE_SPEECH_INPUT && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-//            Intent intent
-//                    = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-//                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
-//                    Locale.getDefault());
-//            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text");
-//            try {
-//                startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT); }
-//            catch (Exception e) {
-//                Toast
-//                        .makeText(MainActivity.this, " " + e.getMessage(),
-//                                Toast.LENGTH_SHORT).show(); }
-//        }
     }
 
 
