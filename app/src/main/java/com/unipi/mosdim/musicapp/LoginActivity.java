@@ -153,7 +153,7 @@ public class LoginActivity extends AppCompatActivity {
                         }
                     });
                 } else {
-                    Toast.makeText(LoginActivity.this, "NO PERMISSION TOLHS STRINGS", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, R.string.reject_gps, Toast.LENGTH_LONG).show();
                 }
             }
             case 2:{
@@ -187,7 +187,7 @@ public class LoginActivity extends AppCompatActivity {
                     });
                     System.out.println(userIDs);
                 } else {
-                    Toast.makeText(LoginActivity.this, "NO PERMISION", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(LoginActivity.this, R.string.reject_gps, Toast.LENGTH_LONG).show();
                 }
             }
         }

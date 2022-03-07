@@ -15,4 +15,6 @@
     <string name="update">Ενημέρωση</string>
     <string name="logout">ΑΠΟΣΥΝΔΕΣΗ</string>
     <string name="showPref">Προβολή προτιμήσεων</string>
+    <string name="reject_gps">Πρέπει να αποδεκτείτε τα δικαιώματα για να έχετε πρόσβαση σε τοπικό περιεχόμενο</string>
+    <string name="reject_voice">Για την φωνητική πληκτρολόγηση πρέπει να αποδεκτείτε τα δικαιώματα</string>
 </resources>
