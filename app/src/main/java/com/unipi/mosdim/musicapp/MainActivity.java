@@ -95,7 +95,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         locman = (LocationManager) getSystemService(LOCATION_SERVICE);
         profileButton = findViewById(R.id.profilebutton);
         settingsButton = findViewById(R.id.settingsbutton);
@@ -211,7 +210,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     }
                     else{
                         if ((country.equals("none") || snapshot.child("location").getValue().toString().contains(country))
-                                &&snapshot.child("category").getValue().toString().equals(preference)) {
+                                &&snapshot.child("category").getValue().toString().equals(preference.toLowerCase())) {
+                            SettingsActivity.switcher=true;
                             songNames.add((String) snapshot.child("name").getValue());
                             artistNames.add((String) snapshot.child("artist").getValue());
                             links.add((String) snapshot.child("link").getValue());

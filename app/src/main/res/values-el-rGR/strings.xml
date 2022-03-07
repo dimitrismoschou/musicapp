@@ -14,4 +14,5 @@
     <string name="favourite_genre">Παρακαλώ επιλέξτε το αγαπημένο σας είδος μουσικής</string>
     <string name="update">Ενημέρωση</string>
     <string name="logout">ΑΠΟΣΥΝΔΕΣΗ</string>
+    <string name="showPref">Προβολή προτιμήσεων</string>
 </resources>
