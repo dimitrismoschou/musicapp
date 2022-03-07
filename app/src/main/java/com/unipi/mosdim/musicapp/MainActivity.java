@@ -127,12 +127,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         }
 
         profileButton.setOnClickListener(new View.OnClickListener() {
-
             public void onClick(View v) {
                 Intent i = new Intent(getApplicationContext(), UserProfile.class);
                 startActivity(i);
             }
-
         });
 
         search.setOnKeyListener(new View.OnKeyListener() {
@@ -140,7 +138,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
                 if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == keyEvent.KEYCODE_ENTER)) {
                     searchGenre();
-
                     //close keyboard
                     View current_view = MainActivity.this.getCurrentFocus();
                     if (current_view != null) {
@@ -148,7 +145,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                 (InputMethodManager) getSystemService(Context.INPUT_METHOD_SERVICE);
                         manager.hideSoftInputFromWindow(current_view.getWindowToken(), 0);
                     }
-
                     return true;
                 }
                 return false;
@@ -157,42 +153,30 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-
-            }
-
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if ((search.length() > 2 && i1 < i2) || search.getText().toString().isEmpty())
                     searchGenre();
             }
-
             @Override
-            public void afterTextChanged(Editable editable) {
-
-            }
+            public void afterTextChanged(Editable editable) {}
         });
 
         if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) &&
                 (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            // TODO: Consider calling
-            //    ActivityCompat#requestPermissions
-            // here to request the missing permissions, and then overriding
-            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-            //                                          int[] grantResults)
-            // to handle the case where the user grants the permission. See the documentation
-            // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQ_LOC_CODE);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_CODE);
         } else {
-            Location location = null;
-            if (locman.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-                locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-                location = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-                onLocationChanged(location);
-                currentCountry();
-            } else {
-                enableLoc();
-            }
+            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        }
+
+        Location location = null;
+        if (locman.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+            location = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            onLocationChanged(location);
+            currentCountry(location);
+        } else {
+            enableLoc();
         }
 
 
@@ -229,10 +213,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         }
                     } else {
                         if ((country.equals("none") || snapshot.child("location").getValue().toString().contains(country))
-                                &&snapshot.child("category").getValue().toString().equals(preference.toLowerCase())) {
+                                && snapshot.child("category").getValue().toString().equals(preference.toLowerCase())) {
                             search.setEnabled(false);
                             search_button.setEnabled(false);
-                            SettingsActivity.switcher=true;
+                            SettingsActivity.switcher = true;
                             songNames.add((String) snapshot.child("name").getValue());
                             artistNames.add((String) snapshot.child("artist").getValue());
                             links.add((String) snapshot.child("link").getValue());
@@ -244,17 +228,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             search.setEnabled(false);
                         }
                     }
-//                    else if (snapshot.child("location").getValue().toString().contains(country)){
-//                        songNames.add((String) snapshot.child("name").getValue());
-//                        artistNames.add((String) snapshot.child("artist").getValue());
-//                        links.add((String) snapshot.child("link").getValue());
-//                        locations.add((String) snapshot.child("location").getValue());
-//                        categories.add((String) snapshot.child("category").getValue());
-//                        arrayQueue.add(i);
-//                        getAllData(i);
-//                        i++;
-//                    }
-
                 }
             }
 
@@ -263,42 +236,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         });
 
-//        DatabaseReference myRef2 = FirebaseDatabase.getInstance("https://musicapp-ad62e-default-rtdb.firebaseio.com/").getReference().child("user_pref");
-//        myRef2.addListenerForSingleValueEvent(new ValueEventListener() {
-//            @Override
-//            public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-//                for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-//                    if (!((String)snapshot.child("genre").getValue()).equals("rock")){
-//                        Toast.makeText(MainActivity.this, "Rock", Toast.LENGTH_SHORT).show();
-//                        break;
-//                    }
-//                }
-//            }
-//
-//            @Override
-//            public void onCancelled(@NonNull DatabaseError databaseError) {
-//
-//            }
-//        });
-
         seekBar.setOnSeekBarChangeListener(new SeekBar.OnSeekBarChangeListener() {
             @Override
             public void onProgressChanged(SeekBar seekBar, int progress, boolean fromUser) {
                 if (fromUser)
                     mediaPlayer.seekTo(progress);
             }
-
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
-
             }
-
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
-
             }
         });
-
     }
 
 
@@ -358,7 +308,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         });
 
-
         l1h.addView(l1v);
         l1h.addView(buttons.get(i));
 
@@ -369,7 +318,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         });
         this.layout.addView(l1h);
-
     }
 
     public void playMusic(int i) {
@@ -427,7 +375,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     public void previousButton(View view) {
         int y = 0;
-
         if (arrayQueue.size() > 1) {
             for (String element : links) {
                 if (!(links.get(arrayQueue.get(y)) == getLink)) {
@@ -458,7 +405,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 } else
                     break;
             }
-
             if (!links.contains(getLink)) {
                 playMusic(0);
             }
@@ -481,10 +427,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         layout.removeAllViews();
         arrayQueue.clear();
         if (!((EditText) findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()) {
-            //int found = 0;
             for (String song_genre : categories) {
                 if (song_genre.equals(((EditText) findViewById(R.id.search_genreEditText)).getText().toString().toLowerCase())) {
-                    //found++;
                     arrayQueue.add(i);
                     getAllData(i);
                     if (mediaPlayer.isPlaying()) {
@@ -505,7 +449,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 i++;
             }
             updatedQueueSize = i;
-            //Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
         } else {
             int j;
             for (j = 0; j < songNames.size(); j++) {
@@ -527,7 +470,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
             }
             updatedQueueSize = j;
-            //Toast.makeText(this, songName.size() + " song(s) found", Toast.LENGTH_SHORT).show();
         }
 
     }
@@ -577,7 +519,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     /**
      * Writes the current country's name to country
      */
-    private void currentCountry() {
+    private void currentCountry(Location location) {
         try {
             Geocoder geocoder = new Geocoder(this);
             List<Address> addresses = null;
@@ -645,7 +587,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 }
             }
         });
-
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
@@ -670,12 +611,14 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         // for ActivityCompat#requestPermissions for more details.
                         return;
                     }
-                    recreate();
                     locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+
                 }
-                else{
-                    Toast.makeText(this, R.string.reject_gps, Toast.LENGTH_LONG).show();
-                    return;
+                else {
+                    mAuth.signOut();
+                    startActivity(new Intent(MainActivity.this, LoginActivity.class));
+                    MainActivity.mediaPlayer.reset();
+                    finish();
                 }
                 break;
             }
@@ -697,7 +640,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                         Toast.LENGTH_SHORT).show(); }
                 }
                 else
-                    Toast.makeText(MainActivity.this, R.string.reject_voice, Toast.LENGTH_LONG).show();
+                    Toast.makeText(MainActivity.this, R.string.reject_voice, Toast.LENGTH_SHORT).show();
                 break;
             }
         }

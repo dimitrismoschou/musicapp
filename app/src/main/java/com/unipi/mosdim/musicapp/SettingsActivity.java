@@ -46,7 +46,7 @@ public class SettingsActivity extends AppCompatActivity {
                                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
                                     if (snapshot.getKey().equals(MainActivity.uid)) {
                                         MainActivity.preference = snapshot.child("genre").getValue().toString();
-                                        startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
+                                        startActivity(new Intent(SettingsActivity.this, MainActivity.class));
                                         break;
                                     }
                                 }
@@ -60,7 +60,7 @@ public class SettingsActivity extends AppCompatActivity {
                     else
                     {
                         MainActivity.preference = "";
-                        startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
+                        startActivity(new Intent(SettingsActivity.this, MainActivity.class));
                         switcher = false;
                     }
                 }
@@ -71,12 +71,5 @@ public class SettingsActivity extends AppCompatActivity {
         startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
         MainActivity.mediaPlayer.reset();
         finish();
-//        MainActivity.mediaPlayer.reset();
-//        MainActivity.preference = "greek"; MainActivity.uid
-//        startActivity(new Intent(SettingsActivity.this, LoginActivity.class));
-    }
-
-    public void showpref(View view){
-
     }
 }
