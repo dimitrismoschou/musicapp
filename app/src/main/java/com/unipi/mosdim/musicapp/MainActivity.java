@@ -12,6 +12,10 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
 import android.content.pm.PackageManager;
+import android.hardware.Sensor;
+import android.hardware.SensorEvent;
+import android.hardware.SensorEventListener;
+import android.hardware.SensorManager;
 import android.location.Address;
 import android.location.Geocoder;
 import android.location.Location;
@@ -21,11 +25,13 @@ import android.media.MediaPlayer;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.PowerManager;
 import android.speech.RecognizerIntent;
 import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
+import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -87,6 +93,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     ArrayList<Integer> arrayQueue = new ArrayList<>();
     String getLink="", country = "none";
     int length=0,i;
+    SensorManager mySensorManager;
+    Sensor myProximitySensor;
+    private PowerManager powerManager;
+    private PowerManager.WakeLock wakeLock;
+    private boolean proximityFlag = true;
 
     private Handler mSeekbarUpdateHandler = new Handler();
 
@@ -100,6 +111,17 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         search = findViewById(R.id.search_genreEditText);
         search_button = findViewById(R.id.imageButton);
 
+        //Proximity sensor code
+        powerManager = (PowerManager) getSystemService(POWER_SERVICE);
+        wakeLock = getWakeLock();
+        mySensorManager = (SensorManager) getSystemService(Context.SENSOR_SERVICE);
+        myProximitySensor = mySensorManager.getDefaultSensor(Sensor.TYPE_PROXIMITY);
+        if (myProximitySensor == null) {
+            Toast.makeText(this, "No Proximity Sensor!", Toast.LENGTH_SHORT).show();
+            proximityFlag = false;
+        } else {
+            mySensorManager.registerListener(proximitySensorEventListener, myProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+        }
 
         profileButton.setOnClickListener(new View.OnClickListener(){
 
@@ -719,5 +741,70 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 search.setText("");
                 search.setText(
                         Objects.requireNonNull(result).get(0).toLowerCase());
-}}}
+            }
+        }
+    }
+
+    /**
+     * Proximity's sensor listener, uses locks to enable or disable screen
+     */
+    SensorEventListener proximitySensorEventListener = new SensorEventListener() {
+        @Override
+        public void onAccuracyChanged(Sensor sensor, int accuracy) {
+            // TODO Auto-generated method stub
+        }
+        @Override
+        public void onSensorChanged(SensorEvent event) {
+            // TODO Auto-generated method stub
+            if(event.sensor.getType()==Sensor.TYPE_PROXIMITY){
+                if(event.values[0]<=0){
+                    try {
+                        wakeLock.acquire();
+                    } catch (Exception e){
+                        e.printStackTrace();
+                        Toast.makeText(MainActivity.this, "No proximity sensor!", Toast.LENGTH_SHORT).show();
+                    }
+                }
+                else{
+                    wakeLock.release();
+                }
+            }
+        }
+    };
+
+    /**
+     * Getter for wakeLock
+     * @return wakeLock or null (if there is no sensor)
+     */
+    private PowerManager.WakeLock getWakeLock(){
+        if(powerManager.isWakeLockLevelSupported(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK)) {
+            PowerManager.WakeLock wakeLock = powerManager.newWakeLock(PowerManager.PROXIMITY_SCREEN_OFF_WAKE_LOCK, "AppName:tag");
+            wakeLock.setReferenceCounted(false);
+            return wakeLock;
+        } else {
+            return null;
+        }
+    }
+
+    /**
+     * Exclusively used for unregistering proximity Listener after app has paused
+     */
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+        if (proximityFlag)
+            mySensorManager.unregisterListener(proximitySensorEventListener);
+    }
+
+    /**
+     * Exclusively used for registering proximity Listener app has resumed
+     */
+    @Override
+    protected void onResume() {
+        super.onResume();
+
+        if (proximityFlag)
+            mySensorManager.registerListener(proximitySensorEventListener, myProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
+    }
 }
