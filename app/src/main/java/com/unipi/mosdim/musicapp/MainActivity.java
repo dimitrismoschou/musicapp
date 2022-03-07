@@ -79,9 +79,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     LinearLayout layout;
     ScrollView scrollView;
     public static MediaPlayer mediaPlayer = new MediaPlayer();
-    public static String preference="";
-    public static String uid="";
-    TextView movingText,minText,maxText;
+    public static String preference = "";
+    public static String uid = "";
+    TextView movingText, minText, maxText;
     Button playButton, nextButton, previousButton;
     EditText search;
     ArrayList<String> songNames = new ArrayList<>();
@@ -91,8 +91,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     ArrayList<String> locations = new ArrayList<>();
     ArrayList<Button> buttons = new ArrayList<>();
     ArrayList<Integer> arrayQueue = new ArrayList<>();
-    String getLink="", country = "none";
-    int length=0,i;
+    String getLink = "", country = "none";
+    int length = 0, i;
     SensorManager mySensorManager;
     Sensor myProximitySensor;
     private PowerManager powerManager;
@@ -111,6 +111,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         search = findViewById(R.id.search_genreEditText);
         search_button = findViewById(R.id.imageButton);
 
+        layout = findViewById(R.id.layout_parent);
+        scrollView = findViewById(R.id.scrollView_parent);
+
         //Proximity sensor code
         powerManager = (PowerManager) getSystemService(POWER_SERVICE);
         wakeLock = getWakeLock();
@@ -123,10 +126,10 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             mySensorManager.registerListener(proximitySensorEventListener, myProximitySensor, SensorManager.SENSOR_DELAY_NORMAL);
         }
 
-        profileButton.setOnClickListener(new View.OnClickListener(){
+        profileButton.setOnClickListener(new View.OnClickListener() {
 
             public void onClick(View v) {
-                Intent i = new Intent(getApplicationContext(),UserProfile.class);
+                Intent i = new Intent(getApplicationContext(), UserProfile.class);
                 startActivity(i);
             }
 
@@ -135,7 +138,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         search.setOnKeyListener(new View.OnKeyListener() {
             @Override
             public boolean onKey(View view, int i, KeyEvent keyEvent) {
-                if ((keyEvent.getAction()== KeyEvent.ACTION_DOWN) && (i == keyEvent.KEYCODE_ENTER)){
+                if ((keyEvent.getAction() == KeyEvent.ACTION_DOWN) && (i == keyEvent.KEYCODE_ENTER)) {
                     searchGenre();
 
                     //close keyboard
@@ -160,7 +163,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
-                if((search.length() > 2 && i1<i2) || search.getText().toString().isEmpty())
+                if ((search.length() > 2 && i1 < i2) || search.getText().toString().isEmpty())
                     searchGenre();
             }
 
@@ -179,25 +182,19 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             //                                          int[] grantResults)
             // to handle the case where the user grants the permission. See the documentation
             // for ActivityCompat#requestPermissions for more details.
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_CODE);
-        }
-        else {
-            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQ_LOC_CODE);
+        } else {
+            Location location = null;
+            if (locman.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
+                locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                location = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                onLocationChanged(location);
+                currentCountry();
+            } else {
+                enableLoc();
+            }
         }
 
-        Location location = null;
-        if (locman.isProviderEnabled(LocationManager.GPS_PROVIDER)){
-            //maybe an onTaskCompleteListener would fit here instead of while
-            while (locman.getLastKnownLocation(LocationManager.GPS_PROVIDER)==null){
-                continue;
-            }
-            location = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            onLocationChanged(location);
-            currentCountry(location);
-        }
-        else {
-            enableLoc();
-        }
 
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
         minText = findViewById(R.id.minTime);
@@ -215,9 +212,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         myRef.addListenerForSingleValueEvent(new ValueEventListener() {
             @Override
             public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                i=0;
+                i = 0;
                 for (DataSnapshot snapshot : dataSnapshot.getChildren()) {
-                    if(preference=="") {
+                    if (preference == "") {
                         if (country.equals("none") || snapshot.child("location").getValue().toString().contains(country)) {
                             search.setEnabled(true);
                             search_button.setEnabled(true);
@@ -230,8 +227,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                             getAllData(i);
                             i++;
                         }
-                    }
-                    else{
+                    } else {
                         if ((country.equals("none") || snapshot.child("location").getValue().toString().contains(country))
                                 &&snapshot.child("category").getValue().toString().equals(preference.toLowerCase())) {
                             search.setEnabled(false);
@@ -306,8 +302,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
 
-    public void settings(View view){
-        Intent i = new Intent(getApplicationContext(),SettingsActivity.class);
+    public void settings(View view) {
+        Intent i = new Intent(getApplicationContext(), SettingsActivity.class);
         startActivity(i);
     }
 
@@ -321,19 +317,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     };
 
 
-    public void setTime(){
-        String time =(new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getCurrentPosition()));
+    public void setTime() {
+        String time = (new SimpleDateFormat("m:ss")).format(new Date(mediaPlayer.getCurrentPosition()));
         minText.setText(time);
-        if(minText.getText().equals(maxText.getText())){
+        if (minText.getText().equals(maxText.getText())) {
             nextButton.performClick();
         }
     }
 
-    public void getAllData(int i){
-        //hardcoded components
-        layout = findViewById(R.id.layout_parent);
-        scrollView = findViewById(R.id.scrollView_parent);
-
+    public void getAllData(int i) {
         LinearLayout.LayoutParams lparams_inside = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
         TextView t1 = new TextView(this);
@@ -354,7 +346,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         l1v.addView(title1);
         l1v.addView(t1);
 
-        buttons.add(i,new Button(this));
+        buttons.add(i, new Button(this));
         lparams_inside.weight = 1;
         buttons.get(i).setLayoutParams(lparams_inside);
         buttons.get(i).setBackgroundResource(R.drawable.ic_small_play);
@@ -379,8 +371,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         this.layout.addView(l1h);
 
     }
-    public void playMusic(int i){
-        if(!getLink.equals(links.get(i))) {
+
+    public void playMusic(int i) {
+        if (!getLink.equals(links.get(i))) {
             mediaPlayer.reset();
             try {
                 mediaPlayer.setDataSource(links.get(i));
@@ -388,7 +381,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                     @RequiresApi(api = Build.VERSION_CODES.M)
                     @Override
                     public void onPrepared(MediaPlayer mediaPlayer) {
-                        for(Button btn1 : buttons)
+                        for (Button btn1 : buttons)
                             btn1.setBackgroundResource(R.drawable.ic_small_play);
                         buttons.get(i).setBackgroundResource(R.drawable.ic_small_pause);
                         playButton.setBackgroundResource(R.drawable.pauseimg);
@@ -398,40 +391,37 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                         mediaPlayer.start();
                         mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
                         mediaPlayer.setPlaybackParams(mediaPlayer.getPlaybackParams().setSpeed(1));
-                        movingText.setText(songNames.get(i)+","+ artistNames.get(i));
+                        movingText.setText(songNames.get(i) + "," + artistNames.get(i));
                     }
                 });
                 mediaPlayer.prepare();
-            }
-            catch (IOException e){
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-        }
-        else if(mediaPlayer.isPlaying()){
+        } else if (mediaPlayer.isPlaying()) {
             buttons.get(i).setBackgroundResource(R.drawable.ic_small_play);
             playButton.setBackgroundResource(R.drawable.playimg);
             mediaPlayer.pause();
             length = mediaPlayer.getCurrentPosition();
             mSeekbarUpdateHandler.removeCallbacks(mUpdateSeekbar);
-        }
-        else{
+        } else {
             buttons.get(i).setBackgroundResource(R.drawable.ic_small_pause);
             playButton.setBackgroundResource(R.drawable.pauseimg);
             mediaPlayer.start();
-            mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar,0);
+            mSeekbarUpdateHandler.postDelayed(mUpdateSeekbar, 0);
         }
     }
 
-    public void playClick(View view){
-        int y=0;
+    public void playClick(View view) {
+        int y = 0;
         for (String element : links) {
             if (element == getLink) {
                 break;
             }
             y++;
         }
-        if(!links.contains(getLink))
-            y=0;
+        if (!links.contains(getLink))
+            y = 0;
         playMusic(y);
     }
 
@@ -453,15 +443,15 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 getLink = "";
                 playMusic(arrayQueue.get(0));
             }
-        }
-        else{
+        } else {
             getLink = "";
             playMusic(arrayQueue.get(0));
         }
     }
-    public void nextButton(View view){
-        int y=0;
-        if((arrayQueue.size()>1)) {
+
+    public void nextButton(View view) {
+        int y = 0;
+        if ((arrayQueue.size() > 1)) {
             for (String element : links) {
                 if (!(links.get(arrayQueue.get(y)) == getLink)) {
                     y++;
@@ -478,26 +468,27 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 getLink = "";
                 playMusic(arrayQueue.get(0));
             }
-        }
-        else{
+        } else {
             getLink = "";
             playMusic(arrayQueue.get(0));
         }
     }
-    int updatedQueueSize=0;
-    public void searchGenre(){
-        int i=0;
+
+    int updatedQueueSize = 0;
+
+    public void searchGenre() {
+        int i = 0;
         layout.removeAllViews();
         arrayQueue.clear();
-        if (!((EditText)findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()){
+        if (!((EditText) findViewById(R.id.search_genreEditText)).getText().toString().isEmpty()) {
             //int found = 0;
-            for (String song_genre: categories) {
-                if (song_genre.equals(((EditText)findViewById(R.id.search_genreEditText)).getText().toString().toLowerCase())){
+            for (String song_genre : categories) {
+                if (song_genre.equals(((EditText) findViewById(R.id.search_genreEditText)).getText().toString().toLowerCase())) {
                     //found++;
                     arrayQueue.add(i);
                     getAllData(i);
-                    if(mediaPlayer.isPlaying()) {
-                        for(int k=0;k<2;k++){
+                    if (mediaPlayer.isPlaying()) {
+                        for (int k = 0; k < 2; k++) {
                             int y = 0;
                             for (String element : links) {
                                 if (element == getLink) {
@@ -515,14 +506,13 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
             updatedQueueSize = i;
             //Toast.makeText(this, found + " song(s) found", Toast.LENGTH_SHORT).show();
-        }
-        else{
+        } else {
             int j;
-            for (j=0 ; j < songNames.size(); j++) {
+            for (j = 0; j < songNames.size(); j++) {
                 arrayQueue.add(j);
                 getAllData(j);
-                if(mediaPlayer.isPlaying()) {
-                    for(int k=0;k<2;k++){
+                if (mediaPlayer.isPlaying()) {
+                    for (int k = 0; k < 2; k++) {
                         int y = 0;
                         for (String element : links) {
                             if (element == getLink) {
@@ -543,18 +533,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
 
-    protected void onStart () {
+    protected void onStart() {
         super.onStart();
         String user = mAuth.getUid();
         if (user == null) {
             startActivity(new Intent(MainActivity.this, LoginActivity.class));
-        }
-        else {
+        } else {
             uid = user;
             mAuth.getCurrentUser();
         }
     }
-
 
 
     /**
@@ -588,17 +576,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     /**
      * Writes the current country's name to country
-     * @param location
      */
-    private void currentCountry (Location location){
+    private void currentCountry() {
         try {
             Geocoder geocoder = new Geocoder(this);
             List<Address> addresses = null;
             addresses = geocoder.getFromLocation(latitude, longitude, 1);
             country = addresses.get(0).getCountryCode();
-        } catch (IOException e){
+        } catch (IOException e) {
             e.printStackTrace();
-        } catch (Exception e){
+        } catch (Exception e) {
             e.printStackTrace();
         }
     }
@@ -662,7 +649,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     @RequiresApi(api = Build.VERSION_CODES.M)
-    public void voiceRec(View view){
+    public void voiceRec(View view) {
         ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.RECORD_AUDIO}, REQUEST_CODE_SPEECH_INPUT);
 
     }
@@ -670,17 +657,26 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
-        switch(requestCode){
-            case REQ_LOC_CODE:{
-                if(grantResults[0]== PackageManager.PERMISSION_GRANTED && grantResults.length>0){
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-                            != PackageManager.PERMISSION_GRANTED) {
-                        Toast.makeText(MainActivity.this, "For location capabilities you need to grand GPS permission", Toast.LENGTH_SHORT).show();
+        switch (requestCode) {
+            case REQ_LOC_CODE: {
+                if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.length > 0) {
+                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+                        // TODO: Consider calling
+                        //    ActivityCompat#requestPermissions
+                        // here to request the missing permissions, and then overriding
+                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                        //                                          int[] grantResults)
+                        // to handle the case where the user grants the permission. See the documentation
+                        // for ActivityCompat#requestPermissions for more details.
+                        return;
                     }
-
-                }
-                else
+                    recreate();
                     locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+                }
+                else{
+                    Toast.makeText(this, R.string.reject_gps, Toast.LENGTH_LONG).show();
+                    return;
+                }
                 break;
             }
             case REQUEST_CODE_SPEECH_INPUT:{
@@ -701,38 +697,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                                         Toast.LENGTH_SHORT).show(); }
                 }
                 else
-                    Toast.makeText(MainActivity.this, "For speech to text you need to grand permission", Toast.LENGTH_SHORT).show();
+                    Toast.makeText(MainActivity.this, R.string.reject_voice, Toast.LENGTH_LONG).show();
                 break;
             }
-
-
-
         }
-
-//        if (requestCode == REQ_LOC_CODE && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-//            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION)
-//                    != PackageManager.PERMISSION_GRANTED) {
-//                return;
-//            }
-//            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-//        }
-//        else if(requestCode == REQUEST_CODE_SPEECH_INPUT && grantResults[0]== PackageManager.PERMISSION_GRANTED){
-//            Intent intent
-//                    = new Intent(RecognizerIntent.ACTION_RECOGNIZE_SPEECH);
-//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE_MODEL,
-//                    RecognizerIntent.LANGUAGE_MODEL_FREE_FORM);
-//            intent.putExtra(RecognizerIntent.EXTRA_LANGUAGE,
-//                    Locale.getDefault());
-//            intent.putExtra(RecognizerIntent.EXTRA_PROMPT, "Speak to text");
-//            try {
-//                startActivityForResult(intent, REQUEST_CODE_SPEECH_INPUT); }
-//            catch (Exception e) {
-//                Toast
-//                        .makeText(MainActivity.this, " " + e.getMessage(),
-//                                Toast.LENGTH_SHORT).show(); }
-//        }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,

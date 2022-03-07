@@ -20,4 +20,6 @@
     <string name="favourite_genre">Please select your favourite genre</string>
     <string name="update">Update</string>
     <string name="showPref">Show preferences</string>
+    <string name="reject_gps">You have to accept permissions in order to get localized content!</string>
+    <string name="reject_voice">For speech to text you need to grand permission</string>
 </resources>
