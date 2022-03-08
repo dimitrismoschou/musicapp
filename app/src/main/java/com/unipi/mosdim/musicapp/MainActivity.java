@@ -1,5 +1,7 @@
 package com.unipi.mosdim.musicapp;
 
+import static com.google.android.gms.location.LocationRequest.PRIORITY_HIGH_ACCURACY;
+
 import androidx.annotation.NonNull;
 import androidx.annotation.Nullable;
 import androidx.annotation.RequiresApi;
@@ -8,6 +10,7 @@ import androidx.core.app.ActivityCompat;
 
 
 import android.Manifest;
+import android.annotation.SuppressLint;
 import android.content.Context;
 import android.content.Intent;
 import android.content.IntentSender;
@@ -31,7 +34,6 @@ import android.text.Editable;
 import android.text.TextWatcher;
 import android.view.KeyEvent;
 import android.view.View;
-import android.view.WindowManager;
 import android.view.inputmethod.InputMethodManager;
 import android.widget.Button;
 import android.widget.EditText;
@@ -70,7 +72,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     LocationManager locman;
     static final int REQ_LOC_CODE = 23;
-    private double latitude, longitude;
     private static final int REQUEST_CODE_SPEECH_INPUT = 1;
     SeekBar seekBar;
     ImageButton search_button;
@@ -101,6 +102,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     private Handler mSeekbarUpdateHandler = new Handler();
 
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
@@ -110,6 +112,9 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
         settingsButton = findViewById(R.id.settingsbutton);
         search = findViewById(R.id.search_genreEditText);
         search_button = findViewById(R.id.imageButton);
+
+        layout = findViewById(R.id.layout_parent);
+        scrollView = findViewById(R.id.scrollView_parent);
 
         //Proximity sensor code
         powerManager = (PowerManager) getSystemService(POWER_SERVICE);
@@ -150,31 +155,34 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
         search.addTextChangedListener(new TextWatcher() {
             @Override
-            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {}
+            public void beforeTextChanged(CharSequence charSequence, int i, int i1, int i2) {
+            }
+
             @Override
             public void onTextChanged(CharSequence charSequence, int i, int i1, int i2) {
                 if ((search.length() > 2 && i1 < i2) || search.getText().toString().isEmpty())
                     searchGenre();
             }
+
             @Override
-            public void afterTextChanged(Editable editable) {}
+            public void afterTextChanged(Editable editable) {
+            }
         });
 
-        if ((ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED) &&
-                (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED)) {
-            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION}, REQ_LOC_CODE);
-        } else {
-            locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+        if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED &&
+                ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
+            ActivityCompat.requestPermissions(this, new String[]{Manifest.permission.ACCESS_FINE_LOCATION, Manifest.permission.ACCESS_COARSE_LOCATION}, REQ_LOC_CODE);
+        }
+        else {
+            Location location = null;
+            if ( !locman.isLocationEnabled()) {
+                enableLoc();
+            }
+            else{
+                locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
+            }
         }
 
-        Location location = null;
-        if (locman.isProviderEnabled(LocationManager.GPS_PROVIDER)) {
-            location = locman.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            onLocationChanged(location);
-            currentCountry(location);
-        } else {
-            enableLoc();
-        }
 
         seekBar = (SeekBar) findViewById(R.id.seekBar3);
         minText = findViewById(R.id.minTime);
@@ -238,9 +246,11 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
                 if (fromUser)
                     mediaPlayer.seekTo(progress);
             }
+
             @Override
             public void onStartTrackingTouch(SeekBar seekBar) {
             }
+
             @Override
             public void onStopTrackingTouch(SeekBar seekBar) {
             }
@@ -272,10 +282,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
     }
 
     public void getAllData(int i) {
-        //hardcoded components
-        layout = findViewById(R.id.layout_parent);
-        scrollView = findViewById(R.id.scrollView_parent);
-
         LinearLayout.LayoutParams lparams_inside = new LinearLayout.LayoutParams(LinearLayout.LayoutParams.WRAP_CONTENT, LinearLayout.LayoutParams.MATCH_PARENT);
 
         TextView t1 = new TextView(this);
@@ -493,8 +499,8 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
      */
     @Override
     public void onLocationChanged(@NonNull Location location) {
-        longitude = location.getLongitude();
-        latitude = location.getLatitude();
+        if (country.equals("none"))
+            currentCountry(location);
     }
 
     /**
@@ -503,9 +509,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
      */
     @Override
     public void onProviderEnabled(@NonNull String provider) {
-        Intent intent = getIntent();
-        finish();
-        startActivity(intent);
     }
 
     /**
@@ -518,13 +521,12 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     /**
      * Writes the current country's name to country
-     * @param location
      */
     private void currentCountry(Location location) {
+        Geocoder geocoder = new Geocoder(this);
         try {
-            Geocoder geocoder = new Geocoder(this);
             List<Address> addresses = null;
-            addresses = geocoder.getFromLocation(latitude, longitude, 1);
+            addresses = geocoder.getFromLocation(location.getLatitude(), location.getLongitude(), 1);
             country = addresses.get(0).getCountryCode();
         } catch (IOException e) {
             e.printStackTrace();
@@ -538,7 +540,7 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
      */
     private void enableLoc() {
         LocationRequest locationRequest = LocationRequest.create();
-        locationRequest.setPriority(LocationRequest.PRIORITY_HIGH_ACCURACY);
+        locationRequest.setPriority(PRIORITY_HIGH_ACCURACY);
         locationRequest.setInterval(30 * 1000);
         locationRequest.setFastestInterval(5 * 1000);
 
@@ -596,24 +598,16 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
 
     }
 
+    @SuppressLint("MissingPermission")
+    @RequiresApi(api = Build.VERSION_CODES.P)
     @Override
     public void onRequestPermissionsResult(int requestCode, @NonNull String[] permissions, @NonNull int[] grantResults) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         switch (requestCode) {
             case REQ_LOC_CODE: {
                 if (grantResults[0] == PackageManager.PERMISSION_GRANTED && grantResults.length > 0) {
-                    if (ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_FINE_LOCATION) != PackageManager.PERMISSION_GRANTED && ActivityCompat.checkSelfPermission(this, Manifest.permission.ACCESS_COARSE_LOCATION) != PackageManager.PERMISSION_GRANTED) {
-                        // TODO: Consider calling
-                        //    ActivityCompat#requestPermissions
-                        // here to request the missing permissions, and then overriding
-                        //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
-                        //                                          int[] grantResults)
-                        // to handle the case where the user grants the permission. See the documentation
-                        // for ActivityCompat#requestPermissions for more details.
-                        return;
-                    }
                     locman.requestLocationUpdates(LocationManager.GPS_PROVIDER, 0, 0, this);
-
+                    recreate();
                 }
                 else {
                     mAuth.signOut();
@@ -646,7 +640,6 @@ public class MainActivity extends AppCompatActivity implements LocationListener 
             }
         }
     }
-
 
     @Override
     protected void onActivityResult(int requestCode, int resultCode,
