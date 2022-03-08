@@ -108,10 +108,10 @@
         android:id="@+id/profilebutton"
         android:layout_width="44dp"
         android:layout_height="36dp"
-        android:layout_marginStart="12dp"
         android:layout_marginTop="12dp"
+        android:layout_marginEnd="64dp"
         android:background="@drawable/ic_baseline_person_24"
-        app:layout_constraintStart_toEndOf="@+id/search_genreEditText"
+        app:layout_constraintEnd_toEndOf="parent"
         app:layout_constraintTop_toTopOf="parent" />
 
     <Button
@@ -132,10 +132,10 @@
 
     <Button
         android:id="@+id/settingsbutton"
-        android:layout_width="38dp"
-        android:layout_height="34dp"
-        android:layout_marginTop="16dp"
-        android:layout_marginEnd="16dp"
+        android:layout_width="43dp"
+        android:layout_height="37dp"
+        android:layout_marginTop="12dp"
+        android:layout_marginEnd="13dp"
         android:background="@drawable/ic_baseline_settings_24"
         android:onClick="settings"
         app:layout_constraintEnd_toEndOf="parent"
