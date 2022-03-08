@@ -51,7 +51,7 @@ public class UserProfile extends AppCompatActivity {
         update_button.setOnClickListener(view -> {
             updateUser();
         });
-
+        edit_email.setEnabled(false);
 
 
     }
